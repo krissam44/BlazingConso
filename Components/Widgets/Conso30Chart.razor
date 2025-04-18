@@ -1,0 +1,91 @@
+﻿@page "/chart30"
+
+@using Syncfusion.Blazor.Charts
+
+@inject IConso30Service Conso30Service
+
+<PageTitle>Consommation Électrique</PageTitle>
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">Consommation de la journée (par tranche de 30 minutes)</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+
+    <MudCardContent Class="doc-section-component-container">
+        <SfChart Palettes="@ChartPalette" Height="@GridHeight">
+            <ChartEvents TooltipRender="TooltipEvent"></ChartEvents>
+
+            <!-- Axe X : Heures de la journée -->
+            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime" LabelRotation="45">
+                <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                @*LabelStyle="@(new ChartAxisLabelStyle { Color = "white" })"
+                               MajorGridLines="@(new ChartAxisMajorGridLines { Width = 0 })">*@
+            </ChartPrimaryXAxis>
+
+            <!-- Axe Y : Consommation -->
+            <ChartPrimaryYAxis Title="Consommation (Wh)" LabelFormat="{value} Wh">
+            </ChartPrimaryYAxis>
+
+            <ChartSeriesCollection>
+                <!-- Série de données -->
+                <ChartSeries DataSource="@ConsoChartData"
+                             XName="HeureDeb" YName="Consommation"
+                             Type="Syncfusion.Blazor.Charts.ChartSeriesType.Column"
+                             ColumnWidth="0.8" ColumnSpacing="0.2"
+                             CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                             LegendShape="LegendShape.Rectangle">
+                    <ChartEmptyPointSettings Mode="EmptyPointMode.Gap"></ChartEmptyPointSettings>
+                </ChartSeries>
+            </ChartSeriesCollection>
+
+            <ChartLegendSettings Visible="true" EnableHighlight="true" ShapeWidth="9" ShapeHeight="9"></ChartLegendSettings>
+            <ChartTooltipSettings Enable="true" Header="<b>${point.x}</b>" Format="<b>Consommation : ${point.y}</b>" EnableHighlight="true"></ChartTooltipSettings>
+            <ChartZoomSettings EnableSelectionZooming="true"></ChartZoomSettings>
+        </SfChart>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public string GridHeight { get; set; } = "400px";
+
+    public class ConsoData
+    {
+        public string HeureDeb { get; set; }        // Heure sous forme "HH:mm"
+        public string HeureFin { get; set; }        // Heure sous forme "HH:mm"
+        public int Consommation { get; set; }       // Consommation en Wh
+        public string HeurePlage => $"{HeureDeb} - {HeureFin}"; // Concatène les heures
+    }
+
+    private List<ConsoData> ConsoChartData { get; set; } = new List<ConsoData>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var conso30Today = await Conso30Service.GetConso30Today();
+
+        if (conso30Today != null)
+        {
+            ConsoChartData = conso30Today.Select(c => new ConsoData
+            {
+                HeureDeb = c.heureDeb.Substring(0, 5), // Afficher "HH:mm"
+                HeureFin = c.heureFin.Substring(0, 5), // Afficher "HH:mm"
+                Consommation = c.consoTotale
+            }).ToList();
+        }
+    }
+
+    private static String[] ChartPalette = new String[] { "#4a86ff", "#ffb545", "#E94649", "#6FAAB0" };
+
+    public void TooltipEvent(TooltipRenderEventArgs args)
+    {
+        int index = (int)args.Data.PointIndex;  // Convertir le double en int
+
+        if (index >= 0 && index < ConsoChartData.Count)
+        {
+            var dataPoint = ConsoChartData[index];
+            args.HeaderText = $"{dataPoint.HeureDeb} - {dataPoint.HeureFin}";
+        }
+    }
+}

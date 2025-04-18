@@ -1,0 +1,72 @@
+﻿@page "/consochart"
+
+@using Syncfusion.Blazor.Charts
+@inject IConsoDayService ConsodayService
+
+<MudCard Style="width: 100%;">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">Consommation journalière des 30 derniers jours</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+
+    <MudCardContent Class="doc-section-component-container">
+        <SfChart Palettes="@ChartPalette">
+            <!-- Configuration de l'axe X pour afficher uniquement le jour -->
+            <ChartPrimaryXAxis Title="Jours" ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime" Format="dd/MM/yyyy" LabelFormat="dd" EnableAutoIntervalOnZooming="true">
+            </ChartPrimaryXAxis>
+            <!-- Configuration de l'axe Y avec le format approprié -->
+            <ChartPrimaryYAxis Title="Consommation" LabelFormat="{value} kWh">
+            </ChartPrimaryYAxis>
+            <ChartSeriesCollection>
+                <!-- Série de données avec gestion des points vides -->
+                <ChartSeries DataSource="@ConsoChartData" XName="JourDate" YName="Consommation" Type="Syncfusion.Blazor.Charts.ChartSeriesType.Column" ColumnSpacing="0.4"
+                             CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })" LegendShape="LegendShape.Rectangle">
+                    <ChartEmptyPointSettings Mode="EmptyPointMode.Gap"></ChartEmptyPointSettings>
+                </ChartSeries>
+            </ChartSeriesCollection>
+            <ChartTooltipSettings Enable="true" Header="<b>${point.x}</b>" Format="<b>Consommation : ${point.y}</b>" EnableHighlight="true"></ChartTooltipSettings>
+            <ChartZoomSettings EnableSelectionZooming="true"></ChartZoomSettings>
+        </SfChart>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    public class ConsoData
+    {
+        public DateTime JourDate { get; set; }        // Date complète pour l'axe X
+        public decimal? Consommation { get; set; }    // Consommation en kWh
+    }
+
+    // Liste des données de consommation pour le graphique
+    private List<ConsoData> ConsoChartData { get; set; } = new();
+
+    // Initialisation des données lors du chargement du composant
+    protected override async Task OnInitializedAsync()
+    {
+        DateTime startDate = DateTime.Now.AddDays(-30); // Date de début
+        DateTime endDate = DateTime.Now; // Date de fin
+
+        var consoDays = await ConsodayService.GetConsoDaysPeriod(startDate, endDate);
+
+        if (consoDays.Any())
+        {
+            ConsoChartData = consoDays.Select(cd => new ConsoData
+                {
+                    JourDate = DateTime.Parse(cd.DateJour),
+                    Consommation = cd.ConsoJourTotal.HasValue ? (decimal?)cd.ConsoJourTotal.Value / 1000 : null
+                }).ToList();
+        }
+    }
+
+    public void TooltipRender(TooltipRenderEventArgs args)
+    {
+        double pointYValue = Convert.ToDouble(args.Data.PointY);
+        string value = pointYValue.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+        args.Text = $"<b>{value}</b>";
+    }
+
+    private static String[] ChartPalette = new String[] { "#4a86ff", "#ffb545", "#E94649", "#6FAAB0" };
+
+    private static String[] ColorPalette = new string[] { "rgb(43, 112, 184)", "rgb(128, 188, 0)", "rgb(70, 194, 203)", "#C12138", "#EB7726", "#E8C41E" };
+}

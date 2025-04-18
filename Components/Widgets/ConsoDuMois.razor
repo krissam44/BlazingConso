@@ -1,0 +1,82 @@
+﻿@page "/conso-du-mois"
+
+@using BlazingConso.Entities
+@inject IConsoDayService ConsodayService
+@inject MoisState MoisState
+
+
+<MudCard style="height:100%">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Consommation du mois @MoisState.MoisSelectionne.ToString("MMMM yyyy")</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Sync" Color="Color.Warning" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudGrid Class="pa-0">
+            @if (consoMonth != null)
+            {
+                <MudItem xs="8" Class="d-flex justify-start pb-1">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">Totale à cet instant</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1">
+                    <MudText Style="font-weight: bold;" Typo="Typo.body1" Color="Color.Warning">@(((double)consoMonth.consoTotale / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="8" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">Heures Creuses</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">@(((double)consoMonth.consoHC / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="8" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">Heures Pleines</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">@(((double)consoMonth.consoHP / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="8" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">Moyenne</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">@(((double)consoMonth.consoMoyenne / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="8" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">Maximale journée</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">@(((double)consoMonth.consoMax / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="8" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">Minimale journée</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Warning">@(((double)consoMonth.consoMin / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public EventCallback OnReady { get; set; }  // Ajout du callback
+    private ConsoMonth consoMonth;
+
+    protected override async Task OnInitializedAsync()
+    {
+        MoisState.OnChange += StateHasChanged;
+        int month = DateTime.Today.Month;
+        int year = DateTime.Today.Year; ;
+        consoMonth = await ConsodayService.GetConsoCurrentMonth();
+        await OnReady.InvokeAsync(); // Notifier le parent
+        StateHasChanged();
+    }
+
+
+}

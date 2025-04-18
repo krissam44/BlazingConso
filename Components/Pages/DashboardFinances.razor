@@ -1,0 +1,271 @@
+﻿@page "/dashboard-finances"
+
+@using BlazingConso.Entities
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor
+@using System.Globalization
+
+@inject IConsoDayService ConsodayService
+
+<ResizeHandler OnHeightChanged="@HandleResize" />
+
+
+<MudContainer Class="mt-0 px-0" MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid>
+        <MudItem xs="7">
+            <MudCard style="height:100%">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">
+                            Détail journalier de la consommation sur une période
+                        </MudText>
+                        <MudGrid Class="pt-4">
+                            <!-- Sélection de la période -->
+                            <MudItem xs="12" sm="4">
+                                <MudDatePicker Label="Date début" Editable="true" @bind-Date="startDate" />
+                            </MudItem>
+                            <MudItem xs="12" sm="4">
+                                <MudDatePicker Label="Date fin" Editable="true" @bind-Date="endDate" />
+                            </MudItem>
+                            <MudItem xs="12" sm="4" Class="d-flex align-center">
+                                <MudButton OnClick="@LoadData" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Upload" Color="Color.Error">Charger</MudButton>
+                            </MudItem>
+
+                        </MudGrid>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    @if (consoDays == null)
+                    {
+                        <p>Chargement des données...</p>
+                    }
+                    else if (consoDays.Count() == 0)
+                    {
+                        <p>Aucune donnée trouvée pour ce mois.</p>
+                    }
+                    else
+                    {
+                        <SfGrid @ref="ConsoGrid" TValue="ConsoDay" DataSource="@consoDays" AllowPaging="false" RowHeight="28" Height="@GridHeight" ShowColumnChooser="true" Toolbar=@ToolbarItems>
+                            <GridPageSettings PageSize=15></GridPageSettings>
+                            <GridAggregates>
+                                <GridAggregate>
+                                    <GridAggregateColumns>
+                                        <GridAggregateColumn Field="@nameof(ConsoDay.DateJour)" Type="Syncfusion.Blazor.Grids.AggregateType.Count" Format="N0">
+                                            <FooterTemplate>
+                                                @{
+                                                    <div>Totaux</div>
+                                                }
+                                            </FooterTemplate>
+                                        </GridAggregateColumn>
+                                        <GridAggregateColumn Field="@nameof(ConsoDay.ConsoJourTotal)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="N0">
+                                            <FooterTemplate>
+                                                @{
+                                                    var SumValue = (context as AggregateTemplateContext);
+                                                    <div>
+                                                        @SumValue.Sum
+                                                    </div>
+                                                }
+                                            </FooterTemplate>
+                                        </GridAggregateColumn>
+                                        <GridAggregateColumn Field="@nameof(ConsoDay.CoutAbonnement)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                                            <FooterTemplate>
+                                                @{
+                                                    var SumValue = (context as AggregateTemplateContext);
+                                                    <div>
+                                                        @SumValue.Sum
+                                                    </div>
+                                                }
+                                            </FooterTemplate>
+                                        </GridAggregateColumn>
+                                        <GridAggregateColumn Field="@nameof(ConsoDay.CoutConsommation)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                                            <FooterTemplate>
+                                                @{
+                                                    var SumValue = (context as AggregateTemplateContext);
+                                                    <div>
+                                                        @SumValue.Sum
+                                                    </div>
+                                                }
+                                            </FooterTemplate>
+                                        </GridAggregateColumn>
+                                        <GridAggregateColumn Field="@nameof(ConsoDay.CoutJour)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                                            <FooterTemplate>
+                                                @{
+                                                    var SumValue = (context as AggregateTemplateContext);
+                                                    <div>
+                                                        @SumValue.Sum
+                                                    </div>
+                                                }
+                                            </FooterTemplate>
+                                        </GridAggregateColumn>
+                                    </GridAggregateColumns>
+                                </GridAggregate>
+                                <GridAggregate>
+                                    <GridAggregateColumns>
+                                        <GridAggregateColumn Field="@nameof(ConsoDay.DateJour)" Type="Syncfusion.Blazor.Grids.AggregateType.Count" Format="N0">
+                                            <FooterTemplate>
+                                                @{
+                                                    <div>Moyenne</div>
+                                                }
+                                            </FooterTemplate>
+                                        </GridAggregateColumn>
+                                        <GridAggregateColumn Field="@nameof(ConsoDay.CoutConsommation)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="C2">
+                                            <FooterTemplate>
+                                                @{
+                                                    var AverageValue = (context as AggregateTemplateContext);
+                                                    <div>
+                                                        @AverageValue.Average
+                                                    </div>
+                                                }
+                                            </FooterTemplate>
+                                        </GridAggregateColumn>
+                                        <GridAggregateColumn Field="@nameof(ConsoDay.CoutJour)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="C2">
+                                            <FooterTemplate>
+                                                @{
+                                                    var AverageValue = (context as AggregateTemplateContext);
+                                                    <div>
+                                                        @AverageValue.Average
+                                                    </div>
+                                                }
+                                            </FooterTemplate>
+                                        </GridAggregateColumn>
+                                    </GridAggregateColumns>
+                                </GridAggregate>
+                            </GridAggregates>
+                            <GridColumns>
+                                <GridColumn Field=@nameof(ConsoDay.DateJour) HeaderText="Date" Format="dd/MM/yyyy" TextAlign="TextAlign.Center" Width="98" />
+
+                                <GridColumn HeaderText="Consommation (Wh)" TextAlign="TextAlign.Center">
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(ConsoDay.ConsoJourHP) HeaderText="HP" Format="N0" TextAlign="TextAlign.Center" Width="98"></GridColumn>
+                                        <GridColumn Field=@nameof(ConsoDay.ConsoJourHC) HeaderText="HC" Format="N0" TextAlign="TextAlign.Center" Width="98"></GridColumn>
+                                        <GridColumn Field=@nameof(ConsoDay.ConsoJourTotal) HeaderText="Total" Format="N0" TextAlign="TextAlign.Center" Width="98"></GridColumn>
+                                    </GridColumns>
+                                </GridColumn>
+
+                                <GridColumn HeaderText="Coûts (€)" TextAlign="TextAlign.Center">
+                                    <GridColumns>
+                                        <GridColumn Field="CoutConsommation" HeaderText="Consommation" TextAlign="TextAlign.Center" Format="F2" Width="118" />
+                                        <GridColumn Field="CoutJour" HeaderText="Global" TextAlign="TextAlign.Center" Format="F2" Width="98" />
+                                    </GridColumns>
+                                </GridColumn>
+
+                                <GridColumn HeaderText="Puissance (W)" TextAlign="TextAlign.Center">
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(ConsoDay.PowerMax) HeaderText="P. Max" Format="N0" TextAlign="TextAlign.Center" Width="88"></GridColumn>
+                                        <GridColumn Field=@nameof(ConsoDay.PowerMin) HeaderText="P. Min" Format="N0" TextAlign="TextAlign.Center" Width="88"></GridColumn>
+                                    </GridColumns>
+                                </GridColumn>
+
+                                <GridColumn HeaderText="Température (°C)" TextAlign="TextAlign.Center">
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(ConsoDay.TempMax) HeaderText="T. Max" Format="N1" TextAlign="TextAlign.Center" Width="88" Visible="false"></GridColumn>
+                                        <GridColumn Field=@nameof(ConsoDay.TempMin) HeaderText="T. Min" Format="N1" TextAlign="TextAlign.Center" Width="88" Visible="false"></GridColumn>
+                                    </GridColumns>
+                                </GridColumn>
+
+                            </GridColumns>
+                        </SfGrid>
+
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="5" sm="5">
+            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                Hauteur utile : @GridHeight
+            </MudText>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+
+@code {
+    [Parameter] public EventCallback OnReady { get; set; }
+
+    private SfGrid<ConsoDay> ConsoGrid;
+    private string GridHeight = "400px";
+    public string[] ToolbarItems = new string[] { "ColumnChooser" };
+
+    private DateTime? startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+    private DateTime? endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+    IEnumerable<ConsoDay> consoDays = new List<ConsoDay>();
+
+    private bool isLoading = false;
+
+    // ----- Paramètres de pagination
+    private int PageSize = 25;
+    private int PageNumber = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    // ---------------------------------------------------------------------------------------------------
+    private void HandleResize(int availableHeight)
+    {
+        var gridUsableHeight = availableHeight - 390;
+
+        GridHeight = $"{gridUsableHeight}px";
+        StateHasChanged();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        if (startDate == null || endDate == null)
+            return;
+
+        try
+        {
+            consoDays = await ConsodayService.GetConsoDaysPeriod(startDate.Value, endDate.Value);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Erreur de chargement : {ex.Message}");
+        }
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task OnPageSizeChanged(int newSize)
+    {
+        PageSize = newSize;
+        PageNumber = 1; // Reset à la première page
+        await LoadData();
+    }
+
+    private async Task OnPageNumberChanged(int newPage)
+    {
+        PageNumber = newPage;
+        await LoadData();
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+}
+
+<style>
+    .e-grid {
+        font-family: "Roboto", "Montserrat", "Helvetica", "Arial", "sans-serif";
+    }
+        .e-grid .e-altrow {
+            background-color: #4a86ff;
+        }
+
+        .e-grid .e-rowcell {
+            font-size: 14px;
+        }
+
+        .e-grid .e-summarycell {
+            font-size: 14px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+
+</style>

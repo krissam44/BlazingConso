@@ -1,0 +1,77 @@
+﻿@page "/conso-delta"
+
+@using BlazingConso.Entities
+@inject IInfosConsoService InfosConsoService
+
+<MudCard style="height:100%">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Comparaison Consommation</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Sync" Color="Color.Info" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudGrid Class="pa-0">
+            @if (consoResume != null)
+            {
+                <MudItem xs="6" Class="d-flex justify-start pb-1">
+                    <MudText Typo="Typo.body1" Color="Color.Info">Jour</MudText>
+                </MudItem>
+                <MudItem xs="6" Class="d-flex justify-end pb-1">
+                    <MudText Style="font-weight: bold;" Typo="Typo.body1" Color="Color.Info">@(((double)consoResume.ConsoJour / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="6" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">Veille</MudText>
+                </MudItem>
+                <MudItem xs="6" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">@(((double)consoResume.ConsoVeille / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="6" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">Semaine</MudText>
+                </MudItem>
+                <MudItem xs="6" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">@(((double)consoResume.ConsoHebdoEnCours / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="6" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">Semaine -1</MudText>
+                </MudItem>
+                <MudItem xs="6" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">@(((double)consoResume.ConsoHebdoPrecedent / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="6" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">Mois</MudText>
+                </MudItem>
+                <MudItem xs="6" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">@(((double)consoResume.ConsoMoisEnCours / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+
+                <MudItem xs="6" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">Mois -1</MudText>
+                </MudItem>
+                <MudItem xs="6" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="Color.Info">@(((double)consoResume.ConsoMoisPrecedent / 1000).ToString("F2")) kWh</MudText>
+                </MudItem>
+        
+            }
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public EventCallback OnReady { get; set; }  // Ajout du callback
+    private ConsoResume consoResume;
+
+    protected override async Task OnInitializedAsync()
+    {
+        consoResume = await InfosConsoService.GetConsoResume();
+        await OnReady.InvokeAsync(); // Notifier le parent
+        StateHasChanged();
+    }
+}
+

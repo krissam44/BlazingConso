@@ -1,0 +1,74 @@
+﻿@page "/synthese-couts"
+@using BlazingConso.Entities
+@inject IInfosCoutsService InfosCoutsService
+
+<MudCard style="height:100%">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Synthèse Coûts</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Rounded.Sync" Color="Color.Success" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudGrid Class="pa-0">
+            @if (infoCout != null)
+            {
+                <MudItem xs="8" Class="d-flex justify-start pb-1">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">Coût du jour</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1">
+                    <MudText Style="font-weight: bold;" Typo="Typo.body1" Color="@Color.Success">@((infoCout.CoutJour).ToString("F2")) €</MudText>
+                </MudItem>
+
+                <MudItem xs="6" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">Coût du jour -1</MudText>
+                </MudItem>
+                <MudItem xs="6" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">@((infoCout.CoutVeille).ToString("F2")) €</MudText>
+                </MudItem>
+
+                <MudItem xs="6" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">Coût de la semaine</MudText>
+                </MudItem>
+                <MudItem xs="6" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">@((infoCout.CoutHebdoCourant).ToString("F2")) €</MudText>
+                </MudItem>
+
+                <MudItem xs="8" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">Coût de la semaine -1</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">@((infoCout.CoutHebdoPrecedent).ToString("F2")) €</MudText>
+                </MudItem>
+
+                <MudItem xs="8" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">Coût du mois</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">@((infoCout.CoutMoisCourant).ToString("F2")) €</MudText>
+                </MudItem>
+
+                <MudItem xs="8" Class="d-flex justify-start pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">Coût du mois -1</MudText>
+                </MudItem>
+                <MudItem xs="4" Class="d-flex justify-end pb-1 pt-0">
+                    <MudText Typo="Typo.body1" Color="@Color.Success">@((infoCout.CoutMoisPrecedent).ToString("F2")) €</MudText>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public EventCallback OnReady { get; set; }  // Ajout du callback
+    private InfoCout? infoCout = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        infoCout = await InfosCoutsService.GetInfoCouts();
+        await OnReady.InvokeAsync(); // Notifier le parent
+        StateHasChanged();
+    }
+}

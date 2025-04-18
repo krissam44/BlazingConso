@@ -1,0 +1,84 @@
+﻿@page "/documentation"
+
+@using MudColor = MudBlazor.Color
+
+<PageTitle>Documentation</PageTitle>
+
+<MudContainer Class="mt-4 px-0" MaxWidth="MaxWidth.ExtraLarge">
+    <MudText Typo="Typo.h3" GutterBottom="true">Blazing Conso<br /></MudText>
+    <MudText Typo="Typo.h6" Class="mb-4">
+        Blazing Conso permet d'afficher sous différentes formes la consommation électrique de ma maison.
+        <br />
+        Ci-dessous, voici le schéma de mon installation.
+    </MudText>
+    <MudText Typo="Typo.body1">
+        <div class="conteneur">
+            <img src="assets/architecture-consoelect.png" alt="Description" class="image-gauche" />
+
+            <div class="texte-droite">
+                <p style="margin-left: 0;">
+                    En préambule : Il n'y a qu'un seul serveur en réalité. Je l'ai éclaté en plusieurs pour avoir un schéma plus clair.
+                </p>
+                <br />
+                <ul style="margin-left: 1em;">
+                    <li>
+                        <strong>Premier Service</strong> : un Raspberry PI3 connecté au compteur Linky via un dongle USB conçu par M. Charles Hallard.
+                        Sur ce Raspberry tourne un programme écrit en Python dont la fonction est de lire par le port série les trames fournies
+                        par le compteur Linky et de les transmettre via le protocole MQTT à un broker Mosquitto.
+                    </li>
+                    <br />
+                    <li>
+                        <strong>Second Service</strong> : wsUpdateDbLinky. Il s'agit d'un programme écrit en C# .NET 9 dont la fonction est de lire
+                        le topic publié par le Raspberry et de mettre à jour différentes tables d'une base MariaDB. <br />
+                        Toutes les requêtes de mises à jour ou d'interrogation sont des procédures stockées et quelques triggers.
+                    </li>
+                    <br />
+                    <li>
+                        <strong>Troisième Service</strong> : WebAPIConso : Il s'agit d’un web service écrit en C# .NET 9 sous la forme d’un Minimal API.
+                        Ce service propose une bonne quinzaine de requêtes.
+                    </li>
+                    <br />
+                    <li>
+                        <strong>Quatrième Service</strong> : BlazingConso : Il s'agit d’une application écrite en C# avec le framework Blazor .NET 9 version "Server".
+                        C'est programme qui est exécuté actuellement.
+                    </li>
+                </ul>
+
+                <br /><br />
+                <MudText Typo="Typo.h6" Class="mb-4">
+                    Architecture du Serveur
+                </MudText>
+                <MudText Typo="Typo.body1">
+                    Il s'agit d'un NUC Intel sous Proxmox, système de virtualisation de serveurs sous sa forme libre. C'est équivalent au système VM Ware.<br />
+                    Sur cet environnement, j'ai plusieurs VM et conteneurs.<br />
+                    Le broker Mosquitto est un conteneurs sous Debian.<br />
+                    La base MariaDb et les 3 applications : wsUpdateDbLinky, webAPIConso et BlazingConso sont dans la même VM qui est sous Ubuntu Server.<br />
+                    Il m'a suffit d'installer .NET 9 SDK pour pouvoir faire fonctionner ces applications écrites en C#.<br />
+                    Elles s'exécutent sous forme de service Linux.
+                </MudText>
+
+            </div>
+        </div>
+    </MudText>
+
+
+
+</MudContainer>
+
+<style>
+    .conteneur {
+        display: flex;
+        align-items: center;
+    }
+
+    .image-gauche {
+        max-width: 650px; /* Ajuste la taille selon le besoin */
+        margin-right: 15px; /* Espace entre l'image et le texte */
+        margin-left: 15px;
+    }
+
+    .texte-droite {
+        flex: 1;
+        margin-right: 15px;
+    }
+</style>

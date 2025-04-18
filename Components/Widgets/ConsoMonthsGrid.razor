@@ -1,0 +1,140 @@
+﻿@using BlazingConso.Entities
+@using Syncfusion.Blazor.Grids
+@using System.Globalization
+
+<SfGrid @ref="ConsoMonthGrid" TValue="ConsoMonth" DataSource="@ConsoMonths" AllowPaging="false" RowHeight="28" Height="@GridHeight" ShowColumnChooser="true" Toolbar=@ToolbarItems>
+
+    <GridAggregates>
+        <GridAggregate>
+            <GridAggregateColumns>
+                <GridAggregateColumn Field="@nameof(ConsoMonth.periode)" Type="Syncfusion.Blazor.Grids.AggregateType.Count" Format="N0">
+                    <FooterTemplate>
+                        @{
+                            <div>Totaux</div>
+                        }
+                    </FooterTemplate>
+                </GridAggregateColumn>
+                <GridAggregateColumn Field="@nameof(ConsoMonth.consoHC)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="N2">
+                    <FooterTemplate>
+                        @{
+                            var SumValue = (context as AggregateTemplateContext);
+                            <div>
+                                @SumValue.Sum
+                            </div>
+                        }
+                    </FooterTemplate>
+                </GridAggregateColumn>
+                <GridAggregateColumn Field="@nameof(ConsoMonth.consoHP)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="N2">
+                    <FooterTemplate>
+                        @{
+                            var SumValue = (context as AggregateTemplateContext);
+                            <div>
+                                @SumValue.Sum
+                            </div>
+                        }
+                    </FooterTemplate>
+                </GridAggregateColumn>
+                <GridAggregateColumn Field="@nameof(ConsoMonth.consoTotale)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="N2">
+                    <FooterTemplate>
+                        @{
+                            var SumValue = (context as AggregateTemplateContext);
+                            <div>
+                                @SumValue.Sum
+                            </div>
+                        }
+                    </FooterTemplate>
+                </GridAggregateColumn>
+                <GridAggregateColumn Field="@nameof(ConsoMonth.coutTotal)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                    <FooterTemplate>
+                        @{
+                            var SumValue = (context as AggregateTemplateContext);
+                            <div>
+                                @SumValue.Sum
+                            </div>
+                        }
+                    </FooterTemplate>
+                </GridAggregateColumn>
+            </GridAggregateColumns>
+        </GridAggregate>
+        <GridAggregate>
+            <GridAggregateColumns>
+                <GridAggregateColumn Field="@nameof(ConsoMonth.periode)" Type="Syncfusion.Blazor.Grids.AggregateType.Count" Format="N0">
+                    <FooterTemplate>
+                        @{
+                            <div>Moyenne</div>
+                        }
+                    </FooterTemplate>
+                </GridAggregateColumn>                
+                <GridAggregateColumn Field="@nameof(ConsoMonth.coutTotal)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="C2">
+                    <FooterTemplate>
+                        @{
+                            var AverageValue = (context as AggregateTemplateContext);
+                            <div>
+                                @AverageValue.Average
+                            </div>
+                        }
+                    </FooterTemplate>
+                </GridAggregateColumn>
+            </GridAggregateColumns>
+        </GridAggregate>
+    </GridAggregates>
+
+    <GridColumns>
+        <GridColumn Field=@nameof(ConsoMonth.periode) HeaderText="Période" TextAlign="TextAlign.Right" Width="111"></GridColumn>
+
+        <GridColumn HeaderText="Consommation (kWh)" TextAlign="TextAlign.Center">
+            <GridColumns>
+                <GridColumn Field=@nameof(ConsoMonth.consoHP) HeaderText="HP" Format="N2" TextAlign="TextAlign.Center" Width="80"></GridColumn>
+                <GridColumn Field=@nameof(ConsoMonth.consoHC) HeaderText="HC" Format="N2" TextAlign="TextAlign.Center" Width="80"></GridColumn>
+                <GridColumn Field=@nameof(ConsoMonth.consoTotale) HeaderText="Totale" Format="N2" TextAlign="TextAlign.Center" Width="80"></GridColumn>
+                <GridColumn Field=@nameof(ConsoMonth.consoMoyenne) HeaderText="Moyenne" Format="N2" TextAlign="TextAlign.Center" Width="80"></GridColumn>
+                <GridColumn Field=@nameof(ConsoMonth.consoMax) HeaderText="Max" Format="N2" TextAlign="TextAlign.Center" Width="79"></GridColumn>
+                <GridColumn Field=@nameof(ConsoMonth.consoMin) HeaderText="Min" Format="N2" TextAlign="TextAlign.Center" Width="79"></GridColumn>
+            </GridColumns>
+        </GridColumn>
+
+        <GridColumn HeaderText="Coûts (€)" TextAlign="TextAlign.Center">
+            <GridColumns>
+                <GridColumn Field=@nameof(ConsoMonth.coutTotal) HeaderText="Global" TextAlign="TextAlign.Center" Format="F2" Width="76" />
+                <GridColumn Field=@nameof(ConsoMonth.coutConsommationHP) HeaderText="HP" TextAlign="TextAlign.Center" Format="F2" Width="68" />
+                <GridColumn Field=@nameof(ConsoMonth.coutConsommationHC) HeaderText="HC" TextAlign="TextAlign.Center" Format="F2" Width="68" />
+            </GridColumns>
+        </GridColumn>
+
+    </GridColumns>
+
+</SfGrid>
+
+
+@code {
+    [Parameter] public IEnumerable<ConsoMonth> ConsoMonths { get; set; }
+    [Parameter] public string GridHeight { get; set; } = "480px";
+    [Parameter] public string[] ToolbarItems { get; set; } = new string[] { "ColumnChooser" };
+
+    private SfGrid<ConsoMonth> ConsoMonthGrid;
+}
+
+<style>
+    .e-grid {
+        font-family: "Roboto", "Montserrat", "Helvetica", "Arial", "sans-serif";
+    }
+
+        .e-grid .e-altrow {
+            background-color: #4a86ff;
+        }
+
+        .e-grid .e-rowcell {
+            font-size: 13px;
+        }
+
+        .e-grid .e-summarycell {
+            font-size: 14px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+
+        /* Cache les scrollbars */
+        .e-grid.no-scrollbar .e-content {
+            overflow: hidden !important;
+        }
+</style>

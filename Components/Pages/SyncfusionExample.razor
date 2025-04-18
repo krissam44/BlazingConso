@@ -1,0 +1,150 @@
+﻿@page "/syncfusion-example"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Charts
+
+<MudContainer Class="mt-0 px-0" MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid>
+        <MudItem xs="11">
+                    <SfChart Width="100%" Height="800px">
+                        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime">
+                            <ChartAxisMajorGridLines Width="1"></ChartAxisMajorGridLines>
+                        </ChartPrimaryXAxis>
+
+                        <ChartPrimaryYAxis>
+                            <ChartAxisLineStyle Width="1"></ChartAxisLineStyle>
+                            <ChartAxisMajorTickLines Width="1"></ChartAxisMajorTickLines>
+                        </ChartPrimaryYAxis>
+
+                        <ChartTooltipSettings Shared="true" Enable="true"></ChartTooltipSettings>
+                        <ChartCrosshairSettings Enable="true" DashArray="2,3" LineType="LineType.Vertical"></ChartCrosshairSettings>
+                        <ChartSeriesCollection>
+                            @foreach (SeriesData series in SeriesCollection)
+                            {
+                                <ChartSeries Name="@series.Name" Visible="@series.Visible" XName="XValue" YName="YValue" DataSource="@series.Data" Type="Syncfusion.Blazor.Charts.ChartSeriesType.Line">
+                                    <ChartMarker Shape="ChartShape.Circle" IsFilled="true" Visible="true" Height="4" Width="4">
+                                    </ChartMarker>
+                                </ChartSeries>
+                            }
+                        </ChartSeriesCollection>
+                    </SfChart>
+        </MudItem>
+        <MudItem xs="1">
+                <SfListBox Value="@SelectedCars" DataSource="@CarList" TItem="CarItem" TValue="string[]">
+                    <ListBoxEvents TValue="string[]" ValueChange="change" TItem="CarItem"></ListBoxEvents>
+                    <ListBoxSelectionSettings ShowCheckbox="true"></ListBoxSelectionSettings>
+                    <ListBoxFieldSettings Text="Name" Value="Id"></ListBoxFieldSettings>
+                </SfListBox>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+
+@code {
+    private string[] SelectedCars { get; set; } = new string[] { "2", "3" };
+
+    private List<CarItem> CarList { get; set; } = new List<CarItem>()
+        {
+        new CarItem { Name = "Series1", Id = "1" },
+        new CarItem { Name = "Series2", Id = "2" },
+        new CarItem { Name = "Series3", Id = "3" },
+        };
+
+    private void change(ListBoxChangeEventArgs<string[], CarItem> args)
+    {
+        var selectedIds = args.Value ?? Array.Empty<string>();
+
+        foreach (var series in SeriesCollection)
+        {
+            // Set visibility to true if the series corresponds to a selected ID
+            series.Visible = selectedIds.Contains(series.Name.Substring(6)); // Extract the series ID from the series name
+        }
+    }
+
+
+    public class CarItem
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+    }
+
+    List<SeriesData> SeriesCollection;
+    int numberOfSeries = 3;
+    Random random = new Random();
+    public List<LineChartData> chartData = new List<LineChartData>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        chartData = GetChartData();
+        SeriesCollection = new List<SeriesData>();
+        for (int i = 1; i <= numberOfSeries; i++)
+        {
+            string carId = $"{i}";
+            SeriesCollection.Add(new SeriesData
+            {
+                Name = "Series" + i,
+                Visible = SelectedCars.Contains(carId),
+                Data = GetChartData()
+            });
+        }
+    }
+
+    private List<LineChartData> GetChartData()
+    {
+        int count = 100;
+        double value = 0;
+        List<LineChartData> data = new List<LineChartData>();
+        Random random = new Random();
+        for (int i = 0; i < count; i++)
+        {
+            if (i % 3 == 0)
+            {
+                value = value - (random.Next(0, 100) / 3) * 4;
+            }
+            else if (i % 2 == 0)
+            {
+                value = value + (random.Next(0, 100) / 3) * 4;
+            }
+            data.Add(new LineChartData()
+            {
+                XValue = new DateTime(1960, 1, 1).AddMonths(i + 1).AddDays(i),
+                YValue = value
+            });
+        }
+        return data;
+    }
+
+    public class SeriesData
+    {
+        public List<LineChartData> Data
+        {
+            get;
+            set;
+        }
+        public string Name
+        {
+            get;
+            set;
+        }
+        public bool Visible
+        {
+            get;
+            set;
+        }
+    }
+
+    public class LineChartData
+    {
+        public DateTime XValue
+        {
+            get;
+            set;
+        }
+        public double YValue
+        {
+            get;
+            set;
+        }
+    }
+}

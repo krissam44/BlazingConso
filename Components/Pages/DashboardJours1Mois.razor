@@ -1,0 +1,140 @@
+﻿@page "/dashboard-jours-1-mois"
+
+@using System.Globalization
+@using BlazingConso.Entities
+
+@inject IConsoDayService ConsodayService
+
+<ResizeHandler OnHeightChanged="@HandleResize" />
+
+<MudContainer Class="mt-0 px-0" MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudCard style="height:100%">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">
+                            Détail journalier de la consommation d'un mois
+                        </MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudGrid Class="pt-0">
+                        <MudItem xs="2">
+                            <MudSelect T="int" Label="Mois" @bind-Value="selectedMonth">
+                                @foreach (var mois in moisList)
+                                {
+                                    <MudSelectItem Value="@mois.Id">@mois.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudSelect T="int" Label="Année" @bind-Value="selectedYear">
+                                @foreach (var year in Enumerable.Range(DateTime.Today.Year - 5, 6))
+                                {
+                                    <MudSelectItem Value="@year">@year</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudButton OnClick="@LoadData" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Upload" Color="Color.Success">Charger</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="6">
+            <ConsoJoursDuMoisGrid ConsoDays="@consoDays" GridHeight="@GridHeight" ToolbarItems="@ToolbarItems" />
+        </MudItem>
+        <MudItem xs="6">
+            <ConsoJoursDuMoisChart ConsoChartData="@ConsoChartData" ChartHeight="@ChartHeight" />
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+
+@code {
+    private int selectedMonth = DateTime.Today.Month;
+    private int selectedYear = DateTime.Today.Year;
+    private IEnumerable<ConsoDay> consoDays = new List<ConsoDay>();
+    private List<HistoDayData> ConsoChartData = new();
+
+    private string GridHeight = "400px";
+    private string ChartHeight = "620px";
+
+    private string[] ToolbarItems = new string[] { "ColumnChooser" };
+
+    private bool isLoading = false;
+
+    // ---------------------------------------------------------------------------------------------------
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    // ---------------------------------------------------------------------------------------------------
+    private async Task LoadData()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        var startDate = new DateTime(selectedYear, selectedMonth, 1);
+        var endDate = startDate.AddMonths(1).AddDays(-1);
+
+        try
+        {
+            consoDays = await ConsodayService.GetConsoDaysPeriod(startDate, endDate);
+
+            if (consoDays.Any())
+            {
+                ConsoChartData = consoDays.Select(cd => new HistoDayData
+                {
+                    DateJour = DateTime.Parse(cd.DateJour),
+                    Consommation = cd.ConsoJourTotal.HasValue ? (decimal?)cd.ConsoJourTotal.Value / 1000m : null
+                }).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Erreur de chargement : {ex.Message}");
+        }
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+
+    // ---------------------------------------------------------------------------------------------------
+    private List<(int Id, string Name)> moisList = Enumerable.Range(1, 12)
+        .Select(i => (i, CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)))
+        .ToList();
+
+
+    // ---------------------------------------------------------------------------------------------------
+    private void HandleResize(int availableHeight)
+    {
+        var gridUsableHeight = availableHeight - 390;
+        var chartUsableHeight = availableHeight - 230;
+
+        GridHeight = $"{gridUsableHeight}px";
+        ChartHeight = $"{chartUsableHeight}px";
+        StateHasChanged();
+    }
+
+}
+
+
+<style>
+    .mud-card-header {
+        padding-top: 6px;
+        padding-right: 16px;
+        padding-bottom: 6px;
+        padding-left: 16px;
+    }
+
+    .mud-grid-spacing-xs-6 > .mud-grid-item {
+        padding-left: 24px;
+        padding-top: 16px;
+    }
+</style>

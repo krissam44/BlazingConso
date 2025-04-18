@@ -1,0 +1,44 @@
+﻿@using BlazingConso.Entities
+@using Syncfusion.Blazor.Charts
+@using System.Globalization
+
+@if (ConsoChartData?.Any() == true)
+{
+    <SfChart Palettes="@ChartPalette" Width="100%" Height="@ChartHeight">
+        <ChartPrimaryXAxis Title="Jours"
+                           ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime"
+                           Format="dd/MM/yyyy"
+                           LabelFormat="dd/MM"
+                           IntervalType="IntervalType.Days"
+                           LabelRotation="45">
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis Title="Consommation (kWh)"
+                           LabelFormat="{value} kWh">
+        </ChartPrimaryYAxis>
+
+        <ChartSeriesCollection>
+            <ChartSeries DataSource="@ConsoChartData"
+                         XName="DateJour" YName="Consommation"
+                         Type="ChartSeriesType.Column"
+                         ColumnWidth="0.9" ColumnSpacing="0.1"
+                         CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })" 
+                         LegendShape="LegendShape.Rectangle">
+                <ChartEmptyPointSettings Mode="EmptyPointMode.Gap" />
+            </ChartSeries>
+        </ChartSeriesCollection>
+        <ChartTooltipSettings Enable="true" Header="<b>${point.x}</b>" Format="<b>Consommation : ${point.y}</b>" EnableHighlight="true" />
+        <ChartZoomSettings EnableSelectionZooming="true" />
+    </SfChart>
+}
+else
+{
+    <MudText Class="px-4 py-2" Typo="Typo.subtitle2">Aucune donnée disponible pour ce mois.</MudText>
+}
+
+
+@code {
+    [Parameter] public List<HistoDayData> ConsoChartData { get; set; } = new();
+    [Parameter] public string ChartHeight { get; set; } = "620px";
+
+    private static string[] ChartPalette = new string[] { "#4a86ff", "#ffb545", "#E94649", "#6FAAB0" };
+}

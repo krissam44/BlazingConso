@@ -1,0 +1,150 @@
+﻿@page "/dashboard-1-jour"
+
+@using BlazingConso.Entities
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor
+@using System.Globalization
+
+@inject IInfosConsoService InfosConsoService
+
+<ResizeHandler OnHeightChanged="@HandleResize" />
+
+<MudContainer Class="mt-0 px-0" MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudCard style="height:100%">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">
+                            Détail de la consommation d'une journée
+                        </MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudGrid Class="pt-0">
+                        <MudItem xs="2">
+                            <MudDatePicker Label="Quelle journée ?" Editable="true" @bind-Date="dateJour" />
+                        </MudItem>
+                        <MudItem xs="3" Class="d-flex justify-center align-center">
+                            <MudButton OnClick="@LoadData" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Upload" Color="Color.Success">Charger</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="5">
+            <Conso1HeureGrid consoGridData="@consoGridData" GridHeight="@GridHeight" ToolbarItems="@ToolbarItems" />
+        </MudItem>
+
+        <MudItem xs="7">
+            <Conso1HeureChart consoChartData="@consoChartData" ChartHeight="@ChartHeight" />
+        </MudItem>
+
+    </MudGrid>
+</MudContainer>
+
+
+@code {
+    private DateTime? dateJour = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+    private string GridHeight = "400px";
+    private string ChartHeight = "620px";
+
+    private string[] ToolbarItems = new string[] { "ColumnChooser" };
+
+    private IEnumerable<ConsoHoraire> consoGridData = new List<ConsoHoraire>();
+    private List<HistoPeriodData> consoChartData { get; set; } = new();
+
+    private bool isLoading = false;
+
+
+    // ---------------------------------------------------------------------------------------------------
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+
+    // ---------------------------------------------------------------------------------------------------
+    private async Task LoadData()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            consoGridData = await InfosConsoService.GetConsoBy1H(dateJour.Value);
+
+            if (consoGridData != null && consoGridData.Any())
+            {
+                consoChartData = consoGridData?.Where(cd => cd.TotalConso.HasValue) // Assurez-vous que TotalConso est valide
+                .Select(cd => new HistoPeriodData
+                {
+                    Periode = cd.TrancheHoraire,
+                    Consommation = cd.TotalConso.HasValue ? cd.TotalConso.Value / 1000m : 0m // Eviter une consommation nulle
+                }).ToList();
+            }
+            else
+            {
+                consoChartData = new List<HistoPeriodData>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Erreur de chargement des données de consommation : {ex.Message}");
+            consoChartData = new List<HistoPeriodData>(); // éviter une liste null en cas d'erreur
+        }
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+
+    // ---------------------------------------------------------------------------------------------------
+    private async Task RefreshData()
+    {
+        await LoadData();
+    }
+
+
+    // ---------------------------------------------------------------------------------------------------
+    private void HandleResize(int availableHeight)
+    {
+        var gridUsableHeight = availableHeight - 350;
+        var chartUsableHeight = availableHeight - 230;
+
+        GridHeight = $"{gridUsableHeight}px";
+        ChartHeight = $"{chartUsableHeight}px";
+        StateHasChanged();
+    }
+
+
+    // ---------------------------------------------------------------------------------------------------
+    public void TooltipRender(TooltipRenderEventArgs args)
+    {
+        double pointYValue = Convert.ToDouble(args.Data.PointY);
+        string value = pointYValue.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+        args.Text = $"<b>{value}</b>";
+    }
+
+
+    // ---------------------------------------------------------------------------------------------------
+    private static String[] ChartPalette = new String[] { "#4a86ff", "#ffb545", "#E94649", "#6FAAB0" };
+    private static String[] ColorPalette = new string[] { "rgb(43, 112, 184)", "rgb(128, 188, 0)", "rgb(70, 194, 203)", "#C12138", "#EB7726", "#E8C41E" };
+}
+
+
+<style>
+    .mud-card-header {
+        padding-top: 6px;
+        padding-right: 16px;
+        padding-bottom: 6px;
+        padding-left: 16px;
+    }
+
+    .mud-grid-spacing-xs-6 > .mud-grid-item {
+        padding-left: 24px;
+        padding-top: 16px;
+    }
+</style>

@@ -1,0 +1,42 @@
+﻿@using BlazingConso.Entities
+@using Syncfusion.Blazor.Charts
+@using System.Globalization
+
+
+<SfChart Palettes="@ChartPalette" Width="100%" Height="@ChartHeight">
+    <!-- Configuration de l'axe X pour afficher uniquement le jour -->
+    <ChartPrimaryXAxis Title="Tranche Horaire"
+                       ValueType="Syncfusion.Blazor.Charts.ValueType.Category"
+                       LabelRotation="45"
+                       Interval="1">
+    </ChartPrimaryXAxis>
+    <!-- Configuration de l'axe Y avec le format approprié -->
+    <ChartPrimaryYAxis Title="Consommation (kWh)"
+                       LabelFormat="{value} kWh">
+    </ChartPrimaryYAxis>
+
+    <ChartTooltipSettings Enable="true" Format="<b>${point.x}</b> : ${point.y}"></ChartTooltipSettings>
+
+    <ChartSeriesCollection>
+        <!-- Série de données avec gestion des points vides -->
+        <ChartSeries DataSource="@consoChartData"
+                     XName="Periode" YName="Consommation"
+                     Type="Syncfusion.Blazor.Charts.ChartSeriesType.Column"
+                     ColumnWidth="0.8" ColumnSpacing="0.2"
+                     CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })" 
+                     LegendShape="LegendShape.Rectangle">
+            <ChartEmptyPointSettings Mode="EmptyPointMode.Gap"></ChartEmptyPointSettings>
+        </ChartSeries>
+    </ChartSeriesCollection>
+
+    <ChartZoomSettings EnableSelectionZooming="true"></ChartZoomSettings>
+</SfChart>
+
+
+@code {
+    [Parameter] public IEnumerable<HistoPeriodData> consoChartData { get; set; }
+    [Parameter] public string ChartHeight { get; set; }
+
+    private static String[] ChartPalette = new String[] { "#4a86ff", "#ffb545", "#E94649", "#6FAAB0" };
+
+}

@@ -1,0 +1,91 @@
+﻿@page "/"
+
+<ResizeHandler OnHeightChanged="@HandleResize" />
+
+<MudContainer Class="mt-0 px-0" MaxWidth="MaxWidth.ExtraLarge">
+    @if (!isReady)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="d-flex mx-auto mt-4" />
+        <MudText Class="d-flex justify-center mt-2">Chargement des données...</MudText>
+    }
+    else
+    {
+        <MudGrid Spacing="2">
+            @*---------------------------------------------- Instantanée lINKY ---------------------------------------------------*@
+            <MudItem xs="3">
+                <InstantaneeLinky />
+            </MudItem>
+
+            @*------------------------------------------ Consommation de la journée ----------------------------------------------*@
+            <MudItem xs="3">
+                <ConsoDuJour />
+            </MudItem>
+
+            @*-------------------------------------------- Consommation du mois --------------------------------------------------*@
+            <MudItem xs="3">
+                <ConsoDelta />
+            </MudItem>
+
+            @*-------------------------------------------- xxxxxxxxxxxxxxxxxxxx --------------------------------------------------*@
+            <MudItem xs="3">
+                <SyntheseCouts />
+            </MudItem>
+
+            @*------------------------------------- Toutes les journées du mois en cours -----------------------------------------*@
+            <MudItem xs="7">
+                <Conso30Chart GridHeight="@GridHeight" />
+            </MudItem>
+
+            @*----------------------------------------- ConsoChart ----------------------------------------------*@
+            <MudItem xs="5">
+                <ConsoBy3HChart ChartHeight="@ChartHeight" />
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
+
+
+@code {
+    private bool isReady = true;
+    private int loadedComponents = 0;
+    private int totalComponents = 5; // Nombre total de composants à charger
+    private string GridHeight = "400px";
+    private string ChartHeight = "400px";
+
+    // ---------------------------------------------------------------------------------------------------
+    private void HandleResize(int availableHeight)
+    {
+        var gridUsableHeight = availableHeight - 364;
+        var chartUsableHeight = availableHeight - 364;
+
+        GridHeight = $"{gridUsableHeight}px";
+        ChartHeight = $"{chartUsableHeight}px";
+        StateHasChanged();
+    }
+
+    private void ChildReady()
+    {
+        loadedComponents++;
+        if (loadedComponents >= totalComponents)
+        {
+            isReady = true;
+            StateHasChanged();
+        }
+    }
+
+
+}
+
+
+<style>
+    .mud-card-header {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .mud-card-content {
+        padding-top: 0px;
+        padding-bottom: 8px;
+    }
+</style>
+

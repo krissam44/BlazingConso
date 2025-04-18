@@ -1,0 +1,37 @@
+﻿@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@code {
+    [Parameter] public EventCallback<int> OnHeightChanged { get; set; }
+
+    private DotNetObjectReference<ResizeHandler>? objRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("resizeHelper.registerResizeCallback", objRef);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnResize(int availableHeight)
+    {
+        await OnHeightChanged.InvokeAsync(availableHeight);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("resizeHelper.unregisterResizeCallback");
+        }
+        catch
+        {
+            // Ignore errors (e.g., if JS runtime is already gone)
+        }
+
+        objRef?.Dispose();
+    }
+}

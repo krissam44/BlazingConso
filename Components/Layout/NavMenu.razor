@@ -1,0 +1,66 @@
+﻿
+<MudNavMenu Class="my-custom-navmenu" Color="Color.Info">
+    <MudNavLink Href="" Match="NavLinkMatch.All" class="mt-4 fait" Icon="@Icons.Material.Filled.AutoAwesomeMosaic">Flash</MudNavLink>
+
+    <MudDivider Class="my-2" />
+    <MudText Typo="Typo.body2" Color="Color.Inherit" Class="ml-4 my-3">Consommations</MudText>
+
+    <MudNavGroup Title="Jours" Icon="@Icons.Material.Filled.TableChart">
+        <MudNavLink Href="dashboard-jours-1-mois" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Today" Class="fait">Un Mois</MudNavLink>
+        <MudNavLink Href="dashboard-jours-mois" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Today" Class="fait">Plusieurs Jours</MudNavLink>
+        <MudNavLink Href="dashboard-1-jour" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Today" Class="fait">Détail d'un Jour</MudNavLink>
+    </MudNavGroup>
+
+    <MudNavLink Href="dashboard-week" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.DateRange">Semaines</MudNavLink>
+
+    <MudNavLink Href="dashboard-month" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Today" Class="fait">Mois</MudNavLink>
+
+    <MudNavLink Href="dashboard-year" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.DateRange">Années</MudNavLink>
+
+    <MudDivider Class="my-2" />
+    <MudText Typo="Typo.body2" Color="Color.Inherit" Class="ml-4 my-3">Finance</MudText>
+
+    <MudNavLink Href="dashboard-finances" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Payment">Dépenses</MudNavLink>
+
+    <MudDivider Class="my-2" />
+    <MudText Typo="Typo.body2" Color="Color.Inherit" Class="ml-4 my-3">Autre</MudText>
+    <MudNavLink Href="documentation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Info">Documentation</MudNavLink>
+    <MudNavLink Href="about" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Info">A Propos de</MudNavLink>
+
+    <MudDivider Class="my-2" />
+    <MudText Typo="Typo.body2" Color="Color.Inherit" Class="ml-4 my-3">Tests</MudText>    
+    <MudNavLink Href="syncfusion-example" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Payment">Syncfusion Chart Example</MudNavLink>
+    <MudNavLink Href="chatgpt" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Payment">ChatGPT</MudNavLink>
+
+
+</MudNavMenu>
+
+<style>
+    .my-custom-navmenu.mud-navmenu.mud-navmenu-default .mud-nav-link.active:not(.mud-nav-link-disabled) {
+        color: #334155 !important;
+        background-color: #d1d5db !important;
+    }
+
+    .mud-nav-link {
+        padding-left: 6px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        color: rgb(7 19 181);
+    }
+
+    .mud-nav-group * .mud-navmenu .mud-nav-item .mud-nav-link {
+        CONTAIN-INTRINSIC-BLOCK-SIZE: AUTO 100PX;
+        padding-left: 10px;
+        padding-inline-start: 20px;
+        padding-inline-end: unset;
+    }
+
+    .fait .mud-nav-link {
+        color: rebeccapurple;
+    }
+
+    .text-fait {
+        color: rebeccapurple;
+    }
+
+</style>

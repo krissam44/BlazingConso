@@ -1,0 +1,99 @@
+﻿@page "/chartby2h-donut"
+
+@using Syncfusion.Blazor.Charts
+@inject IInfosConsoService InfosConsoService
+
+<PageTitle>Consommation Électrique</PageTitle>
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">Répartition de la consommation par tranche de 2H</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+
+    <MudCardContent Class="doc-section-component-container">
+
+        @if (IsLoading)
+        {
+            <MudProgressCircular Indeterminate="true" />
+        }
+        else if (consoChartData.Any())
+        {
+            <SfAccumulationChart EnableAnimation="true" EnableSmartLabels="true">
+                <AccumulationChartLegendSettings Visible="true" Position="LegendPosition.Bottom"></AccumulationChartLegendSettings>
+                <AccumulationChartSeriesCollection>
+                    <AccumulationChartSeries DataSource="@consoChartData"
+                    XName="TrancheHoraire"
+                    YName="TotalConso"
+                    InnerRadius="40%" Radius="R">
+                        <AccumulationDataLabelSettings Visible="true"
+                                                       Name="LabelDisplay"
+                                                       Position="AccumulationLabelPosition.Outside">
+                        </AccumulationDataLabelSettings>
+                    </AccumulationChartSeries>
+                </AccumulationChartSeriesCollection>
+            </SfAccumulationChart>
+        }
+        else
+        {
+            <MudText Color="Color.Warning">Aucune donnée de consommation disponible pour aujourd’hui.</MudText>
+        }
+
+    </MudCardContent>
+</MudCard>
+
+
+
+@code {
+    private List<ConsoHoraire> consoChartData { get; set; } = new();
+    private bool IsLoading = true;
+
+    // -------------------------------------------------------------------------------------------------------------------------------
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        await LoadData();
+
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+
+    // -------------------------------------------------------------------------------------------------------------------------------
+    private async Task LoadData()
+    {
+        IsLoading = true;
+        StateHasChanged();
+
+        var data = await InfosConsoService.GetConsoBy2H(DateTime.Today);
+
+        if (data != null && data.Any())
+        {
+            // Calcul du total global
+            int totalGlobal = data.Sum(c => c.TotalConso.Value);
+
+            // 💡 Création d'une nouvelle liste enrichie avec les pourcentages
+            consoChartData = data.Select(d => new ConsoHoraire
+                {
+                    TrancheHoraire = d.TrancheHoraire,
+                    TotalConso = d.TotalConso,
+                    TotalHP = d.TotalHP,
+                    TotalHC = d.TotalHC,
+                    TempMoyenne = d.TempMoyenne,
+                    PowerMax = d.PowerMax,
+                    PowerMin = d.PowerMin,
+                    Pourcentage = totalGlobal > 0 ? Math.Round(((double)d.TotalConso / totalGlobal) * 100, 1) : 0
+                }).ToList();
+        }
+        else
+        {
+            consoChartData = new List<ConsoHoraire>();
+        }
+
+        IsLoading = false;
+        StateHasChanged();
+    }
+}
+
