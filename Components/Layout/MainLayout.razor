@@ -9,25 +9,55 @@
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+
 <MudLayout>
-    <MudAppBar Elevation="1" Dense="true">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">BlazingConso</MudText>
-        <AutoBreadcrumbs />
-        <MudSpacer />
-        <MudText Typo="Typo.body2" Class="ml-3 pr-5">Version @AppInfosOptions.Value.Version</MudText>
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
-    </MudAppBar>
-    <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="1" Width="180px">
+
+    <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="0" Width="160px">
+        @*
+        <MudDrawerHeader>
+            <MudAvatar Style="margin-left:-20px;">
+                <MudImage Src="assets/logo-CC.png" Width="50" Height="50"/>
+            </MudAvatar> 
+            <MudText Typo="Typo.body1" Color="Color.Primary" Style="margin-top:-5px; margin-left:5px;">BlazingConso</MudText>
+        </MudDrawerHeader>
+        *@
         <NavMenu />
     </MudDrawer>
-    <MudMainContent Class="mt-10 pt-4 pl-4 pr-4 pb-0">
+
+    <MudMainContent Class="mt-0 mb-0 pt-4 pl-4 pr-4 pb-0" Style="background-color: #e0f7fa; min-height: calc(100vh - 46px);">
         @Body
     </MudMainContent>
+
 </MudLayout>
+
+<footer class="page-footer">
+    <MudText Typo="Typo.caption" Align="Align.Center">BlazingConso - Version @AppInfosOptions.Value.Version - ©Copyright @AppInfosOptions.Value.Copyright - Tous droits réservés</MudText>
+</footer>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+<style>
+    .page-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .page-content {
+        flex: 1 0 auto;
+        min-height: 100vh; /* Pour forcer l'expansion du fond */
+    }
+
+    .page-footer {
+        flex-shrink: 0;
+        padding: 12px;
+        background-color: #e0f7fa;
+        color: #0f172a;
+        text-align: center;
+        font-size: 0.95rem;
+    }
+</style>

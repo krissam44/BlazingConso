@@ -8,7 +8,9 @@
 
 <ResizeHandler OnHeightChanged="@HandleResize" />
 
-<MudContainer Class="mt-0 px-0" MaxWidth="MaxWidth.ExtraLarge">
+<MudText Class="d-flex align-left justify-left " Typo="Typo.h6">Synthèse d'une journée</MudText>
+
+<MudContainer Class="mt-4 px-0" MaxWidth="MaxWidth.ExtraLarge">
     <MudGrid>
         <MudItem xs="12">
             <MudCard style="height:100%">
@@ -175,19 +177,17 @@
     }
 
 
-    // ---------------------------------------------------------------------------------------------------
-    protected override async Task OnInitializedAsync()
+    protected override void OnAfterRender(bool firstRender)
     {
-        await LoadData();
-        isDataReady = true;
+        if (firstRender)
+        {
+            LoadData();
+        }
     }
 
-
     // ---------------------------------------------------------------------------------------------------
-    private async Task LoadData()
+    private async void LoadData()
     {
-        //StateHasChanged();
-
         try
         {
             var rawData = await ConsoMonthService.GetConsoMonthsOfYearAsync(startMonth, startYear, endMonth, endYear);
@@ -232,7 +232,8 @@
             Console.Error.WriteLine($"Erreur de chargement : {ex.Message}");
         }
 
-        //StateHasChanged();
+        isDataReady = true;
+        StateHasChanged();
     }
 }
 

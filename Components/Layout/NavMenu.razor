@@ -1,39 +1,44 @@
 ﻿
 <MudNavMenu Class="my-custom-navmenu" Color="Color.Info">
-    <MudNavLink Href="" Match="NavLinkMatch.All" class="mt-4 fait" Icon="@Icons.Material.Filled.AutoAwesomeMosaic">Flash</MudNavLink>
 
     <MudDivider Class="my-2" />
-    <MudText Typo="Typo.body2" Color="Color.Inherit" Class="ml-4 my-3">Consommations</MudText>
 
-    <MudNavGroup Title="Jours" Icon="@Icons.Material.Filled.TableChart">
-        <MudNavLink Href="dashboard-jours-1-mois" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Today" Class="fait">Un Mois</MudNavLink>
-        <MudNavLink Href="dashboard-jours-mois" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Today" Class="fait">Plusieurs Jours</MudNavLink>
-        <MudNavLink Href="dashboard-1-jour" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Today" Class="fait">Détail d'un Jour</MudNavLink>
-    </MudNavGroup>
-
-    <MudNavLink Href="dashboard-week" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.DateRange">Semaines</MudNavLink>
-
-    <MudNavLink Href="dashboard-month" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Today" Class="fait">Mois</MudNavLink>
-
-    <MudNavLink Href="dashboard-year" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.DateRange">Années</MudNavLink>
+    <MudNavLink Href="" Match="NavLinkMatch.All" class="mt-4 fait">Flash</MudNavLink>
 
     <MudDivider Class="my-2" />
-    <MudText Typo="Typo.body2" Color="Color.Inherit" Class="ml-4 my-3">Finance</MudText>
 
-    <MudNavLink Href="dashboard-finances" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Payment">Dépenses</MudNavLink>
+    <MudNavLink Href="dashboard-jours-1-mois" Match="NavLinkMatch.Prefix">Un Mois</MudNavLink>
 
-    <MudDivider Class="my-2" />
-    <MudText Typo="Typo.body2" Color="Color.Inherit" Class="ml-4 my-3">Autre</MudText>
-    <MudNavLink Href="documentation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Info">Documentation</MudNavLink>
-    <MudNavLink Href="about" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Info">A Propos de</MudNavLink>
+    <MudNavLink Href="dashboard-jours-mois" Match="NavLinkMatch.Prefix">Plusieurs Jours</MudNavLink>
+
+    <MudNavLink Href="dashboard-1-jour" Match="NavLinkMatch.Prefix">Détail d'un Jour</MudNavLink>
 
     <MudDivider Class="my-2" />
-    <MudText Typo="Typo.body2" Color="Color.Inherit" Class="ml-4 my-3">Tests</MudText>    
-    <MudNavLink Href="syncfusion-example" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Payment">Syncfusion Chart Example</MudNavLink>
-    <MudNavLink Href="chart-test-page" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Payment">Chart Test PageT</MudNavLink>
 
+    <MudNavLink Href="dashboard-week" Match="NavLinkMatch.Prefix">Semaines</MudNavLink>
+
+    <MudNavLink Href="dashboard-month" Match="NavLinkMatch.Prefix">Mois</MudNavLink>
+
+    <MudNavLink Href="dashboard-year" Match="NavLinkMatch.Prefix">Années</MudNavLink>
+
+    <MudDivider Class="my-2" />
+
+    <MudNavLink Href="dashboard-finances" Match="NavLinkMatch.Prefix">Facturation</MudNavLink>
+
+    <MudDivider Class="my-2" />
+
+    <MudNavLink Href="documentation" Match="NavLinkMatch.Prefix">Documentation</MudNavLink>
+
+    <MudNavLink Href="about" Match="NavLinkMatch.Prefix">A Propos de</MudNavLink>
+
+    <MudDivider Class="my-2" />
+
+    <MudNavLink Href="syncfusion-example" Match="NavLinkMatch.Prefix">SfChart Example</MudNavLink>
+
+    <MudNavLink Href="chart-test-page" Match="NavLinkMatch.Prefix">Chart Test</MudNavLink>
 
 </MudNavMenu>
+
 
 <style>
     .my-custom-navmenu.mud-navmenu.mud-navmenu-default .mud-nav-link.active:not(.mud-nav-link-disabled) {
@@ -42,25 +47,15 @@
     }
 
     .mud-nav-link {
-        padding-left: 6px;
-        padding-top: 6px;
-        padding-bottom: 6px;
+        font-size: 1.05rem;
+        padding-left: 0px;
+        padding-top: 8px;
+        padding-bottom: 8px;
         color: rgb(7 19 181);
     }
 
-    .mud-nav-group * .mud-navmenu .mud-nav-item .mud-nav-link {
-        CONTAIN-INTRINSIC-BLOCK-SIZE: AUTO 100PX;
-        padding-left: 10px;
-        padding-inline-start: 20px;
-        padding-inline-end: unset;
-    }
-
-    .fait .mud-nav-link {
-        color: rebeccapurple;
-    }
-
-    .text-fait {
-        color: rebeccapurple;
-    }
+        .mud-nav-link .mud-nav-link-text {
+            text-align: center;
+        }
 
 </style>

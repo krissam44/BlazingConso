@@ -1,10 +1,14 @@
-﻿using MudBlazor;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using MudBlazor.Utilities;
 
 namespace BlazingConso.Components.Layout;
 
 public partial class MainLayout
 {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+
+    private bool open = true;
     private bool _drawerOpen = true;
     private bool _isDarkMode = false;
     private MudTheme? theme = null;

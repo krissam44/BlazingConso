@@ -30,17 +30,20 @@
                     <li>
                         <strong>Second Service</strong> : wsUpdateDbLinky. Il s'agit d'un programme écrit en C# .NET 9 dont la fonction est de lire
                         le topic publié par le Raspberry et de mettre à jour différentes tables d'une base MariaDB. <br />
-                        Toutes les requêtes de mises à jour ou d'interrogation sont des procédures stockées et quelques triggers.
+                        Toutes les requêtes de mises à jour ou d'interrogation sont des procédures stockées et quelques triggers.<br />
+                        Pour ce programme, j'utilise les librairies Dapper et mySQLConnector.
                     </li>
                     <br />
                     <li>
                         <strong>Troisième Service</strong> : WebAPIConso : Il s'agit d’un web service écrit en C# .NET 9 sous la forme d’un Minimal API.
-                        Ce service propose une bonne quinzaine de requêtes.
+                        Ce service propose une bonne quinzaine de requêtes.<br />
+                        Pour ce programme, j'utilise les librairies Dapper et mySQLConnector.
                     </li>
                     <br />
                     <li>
                         <strong>Quatrième Service</strong> : BlazingConso : Il s'agit d’une application écrite en C# avec le framework Blazor .NET 9 version "Server".
-                        C'est programme qui est exécuté actuellement.
+                        C'est ce programme qui est exécuté actuellement.<br />
+                        Pour ce programme, j'utilise les librairies Syncfusion (grid et chart)  et MudBlazor (navigation, bouton, selecteurs).
                     </li>
                 </ul>
 
@@ -49,12 +52,16 @@
                     Architecture du Serveur
                 </MudText>
                 <MudText Typo="Typo.body1">
-                    Il s'agit d'un NUC Intel sous Proxmox, système de virtualisation de serveurs sous sa forme libre. C'est équivalent au système VM Ware.<br />
+                    Il s'agit d'un NUC Intel sous Proxmox, système de virtualisation de serveurs (en version gratuire). C'est l'équivalent du système VM Ware.<br />
                     Sur cet environnement, j'ai plusieurs VM et conteneurs.<br />
-                    Le broker Mosquitto est un conteneurs sous Debian.<br />
+                    <li>
+                    Le broker Mosquitto est un conteneur sous Debian.
+                    </li>
+                    <li>
                     La base MariaDb et les 3 applications : wsUpdateDbLinky, webAPIConso et BlazingConso sont dans la même VM qui est sous Ubuntu Server.<br />
                     Il m'a suffit d'installer .NET 9 SDK pour pouvoir faire fonctionner ces applications écrites en C#.<br />
                     Elles s'exécutent sous forme de service Linux.
+                    </li>
                 </MudText>
 
             </div>

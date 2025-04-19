@@ -2,7 +2,9 @@
 
 <ResizeHandler OnHeightChanged="@HandleResize" />
 
-<MudContainer Class="mt-0 px-0" MaxWidth="MaxWidth.ExtraLarge">
+<MudText Class="d-flex align-left justify-left " Typo="Typo.h6">Flash</MudText>
+
+<MudContainer Class="mt-4 px-0" MaxWidth="MaxWidth.False">
     @if (!isReady)
     {
         <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="d-flex mx-auto mt-4" />
@@ -10,34 +12,34 @@
     }
     else
     {
-        <MudGrid Spacing="2">
+        <MudGrid Spacing="6">
             @*---------------------------------------------- Instantanée lINKY ---------------------------------------------------*@
-            <MudItem xs="3">
+            <MudItem xs="12" sm="6" md="3">
                 <InstantaneeLinky />
             </MudItem>
 
             @*------------------------------------------ Consommation de la journée ----------------------------------------------*@
-            <MudItem xs="3">
+            <MudItem xs="12" sm="6" md="3">
                 <ConsoDuJour />
             </MudItem>
 
             @*-------------------------------------------- Consommation du mois --------------------------------------------------*@
-            <MudItem xs="3">
+            <MudItem xs="12" sm="6" md="3">
                 <ConsoDelta />
             </MudItem>
 
             @*-------------------------------------------- xxxxxxxxxxxxxxxxxxxx --------------------------------------------------*@
-            <MudItem xs="3">
+            <MudItem xs="12" sm="6" md="3">
                 <SyntheseCouts />
             </MudItem>
 
             @*------------------------------------- Toutes les journées du mois en cours -----------------------------------------*@
-            <MudItem xs="7">
+            <MudItem xs="12" md="7">
                 <Conso30Chart GridHeight="@GridHeight" />
             </MudItem>
 
             @*----------------------------------------- ConsoChart ----------------------------------------------*@
-            <MudItem xs="5">
+            <MudItem xs="12" md="5">
                 <ConsoBy3HChart ChartHeight="@ChartHeight" />
             </MudItem>
         </MudGrid>
