@@ -7,42 +7,42 @@
 <MudContainer Class="mt-4 px-0" MaxWidth="MaxWidth.False">
     @if (!isReady)
     {
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="d-flex mx-auto mt-4" />
-        <MudText Class="d-flex justify-center mt-2">Chargement des données...</MudText>
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="d-flex mx-auto mt-4" />
+            <MudText Class="d-flex justify-center mt-2">Chargement des données...</MudText>
     }
     else
     {
-        <MudGrid Spacing="6">
+            <MudGrid Spacing="6">
             @*---------------------------------------------- Instantanée lINKY ---------------------------------------------------*@
-            <MudItem xs="12" sm="6" md="3">
-                <InstantaneeLinky />
-            </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <InstantaneeLinky />
+                </MudItem>
 
             @*------------------------------------------ Consommation de la journée ----------------------------------------------*@
-            <MudItem xs="12" sm="6" md="3">
-                <ConsoDuJour />
-            </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <ConsoDuJour />
+                </MudItem>
 
             @*-------------------------------------------- Consommation du mois --------------------------------------------------*@
-            <MudItem xs="12" sm="6" md="3">
-                <ConsoDelta />
-            </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <ConsoDelta />
+                </MudItem>
 
             @*-------------------------------------------- xxxxxxxxxxxxxxxxxxxx --------------------------------------------------*@
-            <MudItem xs="12" sm="6" md="3">
-                <SyntheseCouts />
-            </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <SyntheseCouts />
+                </MudItem>
 
             @*------------------------------------- Toutes les journées du mois en cours -----------------------------------------*@
-            <MudItem xs="12" md="7">
-                <Conso30Chart GridHeight="@GridHeight" />
-            </MudItem>
+                <MudItem xs="12" md="7">
+                    <Conso30Chart GridHeight="@GridHeight" />
+                </MudItem>
 
             @*----------------------------------------- ConsoChart ----------------------------------------------*@
-            <MudItem xs="12" md="5">
-                <ConsoBy3HChart ChartHeight="@ChartHeight" />
-            </MudItem>
-        </MudGrid>
+                <MudItem xs="12" md="5">
+                    <ConsoBy3HChart ChartHeight="@ChartHeight" />
+                </MudItem>
+            </MudGrid>
     }
 </MudContainer>
 
@@ -90,4 +90,3 @@
         padding-bottom: 8px;
     }
 </style>
-

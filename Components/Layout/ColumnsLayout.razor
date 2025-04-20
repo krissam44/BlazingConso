@@ -1,0 +1,85 @@
+﻿@inherits LayoutComponentBase
+
+@using Microsoft.Extensions.Options
+@using BlazingConso.Configuration
+@using BlazingConso.Components.Navigation
+@using MudBlazor.Services
+
+@inject IOptions<AppInfos> AppInfosOptions
+
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+
+    <!-- Menu latéral gauche -->
+    <MudDrawer Open="true" Elevation="0" Width="160px" MudBlazor.Anchor="Anchor.Left">
+        <MudDrawerHeader>
+            <MudAvatar Style="margin-left:-6px; margin-top: 7px;">
+                <MudImage Src="assets/logo-CC.png" Width="50" Height="50" />
+            </MudAvatar>
+            <MudText Typo="Typo.h6" Color="Color.Primary" Style="margin-top:0px; margin-left:10px;">Blazing</MudText>
+            <MudText Typo="Typo.h6" Color="Color.Primary" Style="margin-top:25px; margin-left:-67px;">Conso</MudText>
+        </MudDrawerHeader>
+        <NavMenu />
+    </MudDrawer>
+
+    <!-- Contenu principal avec colonne droite fixe -->
+    <MudMainContent Class="mt-0 mb-0 pt-4 pl-4 pr-4 pb-0" Style="background-color: #edf4f7; min-height: calc(100vh - 46px);">
+        <MudPaper Class="d-flex flex-column" Elevation="0" Style="height: 100vh; overflow: hidden;">
+            <!-- Contenu scrollable -->
+            <MudPaper Class="flex-grow-1" Style="overflow-y: auto; background-color: #edf4f7;">
+                <p>Ceci est un texte</p>
+            </MudPaper>
+
+            <!-- Contenu fixe à droite -->
+            <MudPaper Elevation="0" Class="d-flex flex-row px-2 mx-4" Style="background-color: #FFFFFF; width: 250px; position: fixed; top: 0; right: 0; height: 100vh;">
+                <!-- Composants MudBlazor ici -->
+                <p>Ceci est un autre texte</p>
+            </MudPaper>
+        </MudPaper>
+    </MudMainContent>
+</MudLayout>
+
+<footer class="page-footer">
+    <MudText Typo="Typo.caption" Align="Align.Center">
+        BlazingConso - Version @AppInfosOptions.Value.Version - ©Copyright @AppInfosOptions.Value.Copyright - Tous droits réservés
+    </MudText>
+</footer>
+
+<style>
+    .main-content {
+        background-color: #edf4f7;
+        min-height: calc(100vh - 46px);
+        padding: 0;
+    }
+
+    .content-container {
+        display: flex;
+        height: 100%;
+    }
+
+    .scrollable-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .right-column {
+        width: 250px;
+        background-color: #e0e0e0;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .page-footer {
+        flex-shrink: 0;
+        padding: 12px;
+        background-color: #edf4f7;
+        color: #0f172a;
+        text-align: center;
+        font-size: 0.95rem;
+    }
+</style>

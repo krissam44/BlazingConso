@@ -1,0 +1,19 @@
+﻿.responsive-chart-container {
+    width: 100 %;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.mud-card-header {
+    padding-top: 6px;
+    padding-right: 16px;
+    padding-bottom: 6px;
+    padding-left: 16px;
+}
+
+.card-custom-style {
+    border-radius: 16px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.9);
+    background-color: #f2cb61;
+    height: 100 %;
+}

@@ -1,7 +1,9 @@
 ﻿@inherits LayoutComponentBase
+
 @using Microsoft.Extensions.Options
 @using BlazingConso.Configuration
 @using BlazingConso.Components.Navigation
+@using MudBlazor.Services
 
 @inject IOptions<AppInfos> AppInfosOptions
 
@@ -12,19 +14,20 @@
 
 <MudLayout>
 
-    <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="0" Width="160px">
-        @*
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="0" Width="160px">
+
         <MudDrawerHeader>
-            <MudAvatar Style="margin-left:-20px;">
-                <MudImage Src="assets/logo-CC.png" Width="50" Height="50"/>
-            </MudAvatar> 
-            <MudText Typo="Typo.body1" Color="Color.Primary" Style="margin-top:-5px; margin-left:5px;">BlazingConso</MudText>
+            <MudAvatar Style="margin-left:-6px; margin-top: 7px;">
+                <MudImage Src="assets/logo-CC.png" Width="50" Height="50" />
+            </MudAvatar>
+            <MudText Typo="Typo.h6" Color="Color.Primary" Style="margin-top:0px; margin-left:10px;">Blazing</MudText>
+            <MudText Typo="Typo.h6" Color="Color.Primary" Style="margin-top:25px; margin-left:-67px;">Conso</MudText>
         </MudDrawerHeader>
-        *@
+
         <NavMenu />
     </MudDrawer>
 
-    <MudMainContent Class="mt-0 mb-0 pt-4 pl-4 pr-4 pb-0" Style="background-color: #e0f7fa; min-height: calc(100vh - 46px);">
+    <MudMainContent Class="mt-0 mb-0 pt-4 pl-4 pr-4 pb-0" Style="background-color: #edf4f7; min-height: calc(100vh - 46px);">
         @Body
     </MudMainContent>
 
@@ -55,9 +58,18 @@
     .page-footer {
         flex-shrink: 0;
         padding: 12px;
-        background-color: #e0f7fa;
+        background-color: #edf4f7;
         color: #0f172a;
         text-align: center;
         font-size: 0.95rem;
+    }
+
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 70px; /* Ajustable à ton besoin */
+        padding-top: -30px;
+        margin-top: -30px;
     }
 </style>

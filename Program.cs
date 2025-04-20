@@ -3,6 +3,7 @@ using BlazingConso.Configuration;
 using BlazingConso.Helpers;
 using BlazingConso.Services.Implementations;
 using BlazingConso.Services.Interfaces;
+using MudBlazor;
 using MudBlazor.Services;
 using Syncfusion.Blazor;
 
@@ -28,8 +29,9 @@ builder.Services.AddHttpClient("ConsommationClient", client =>
 // ----- Active la licence Syncfusion
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mzc5NjI1MEAzMjM5MmUzMDJlMzAzYjMyMzkzYktiTno1MHBFRFFYdnFsTTFqek0zS200ejROUThPenZLOE1rY2Jabjc0eTQ9;Mzc5NjI1MUAzMjM5MmUzMDJlMzAzYjMyMzkzYk55eUFvRWxJM3BRTWp5WlFuM1kwcFp4NGhiZy9UbEhIV21XYW5NWnRyZzg9");
 
-// ----- Add MudBlazor services
+// Ajout des services MudBlazor avec les configurations spécifiques
 builder.Services.AddMudServices();
+
 // ----- Add SyncfusionBlazor services
 builder.Services.AddSyncfusionBlazor();
 

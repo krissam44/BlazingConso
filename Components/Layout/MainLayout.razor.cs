@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazor.Utilities;
+using MudBlazor.Services;
 
 namespace BlazingConso.Components.Layout;
 
@@ -8,79 +9,51 @@ public partial class MainLayout
 {
     [Inject] private NavigationManager Nav { get; set; } = default!;
 
-    private bool open = true;
     private bool _drawerOpen = true;
+    private DrawerVariant _drawerVariant = DrawerVariant.Responsive;
+
     private bool _isDarkMode = false;
     private MudTheme? theme = null;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-
         theme = new()
         {
             PaletteLight = CrispyThemeSunsetSerenade.Theme.PaletteLight,
             PaletteDark = CrispyThemeSunsetSerenade.Theme.PaletteDark,
-            LayoutProperties = new LayoutProperties()
+            LayoutProperties = new LayoutProperties(),
         };
+
+        base.OnInitialized();
     }
 
-    private bool _mini = true;
-
-    private void OnHoverEnter()
+    private Task OnBreakpointChanged(Breakpoint breakpoint)
     {
-        _mini = false; // développe
-    }
-
-    private void OnHoverLeave()
-    {
-        _mini = true; // réduit
-    }
-
-    private bool _miniVariant = true;
-
-    private void ToggleMiniVariant()
-    {
-        _miniVariant = !_miniVariant;
-    }
-
-    private void OnDrawerMouseEnter()
-    {
-        _miniVariant = false; // développe le menu au survol
-    }
-
-    private void OnDrawerMouseLeave()
-    {
-        _miniVariant = true; // referme le menu quand la souris sort
-    }
-
-    private void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-
-    private void DarkModeToggle()
-    {
-        _isDarkMode = !_isDarkMode;
-    }
-
-    private void DrawerClose()
-    {
-        _drawerOpen = false;
-    }
-
-    private void DrawerAutoClose()
-    {
-        // Se ferme automatiquement si on sort du menu (drawer)
-        _drawerOpen = false;
-    }
-
-    private void HandleBodyMouseOver()
-    {
-        if (_drawerOpen)
+        InvokeAsync(() =>
         {
+            UpdateDrawer(breakpoint);
+            StateHasChanged();
+        });
+        return Task.CompletedTask;
+    }
+
+    private void UpdateDrawer(Breakpoint breakpoint)
+    {
+        if (breakpoint < Breakpoint.Md)
+        {
+            _drawerVariant = DrawerVariant.Temporary;
             _drawerOpen = false;
         }
+        else
+        {
+            _drawerVariant = DrawerVariant.Responsive;
+            _drawerOpen = true;
+        }
+    }
+
+    private void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
     }
 
     public class CrispyThemeSunsetSerenade
@@ -93,7 +66,7 @@ public partial class MainLayout
                 {
                     PaletteLight = new MudBlazor.PaletteLight
                     {
-                        AppbarBackground = new MudColor("#003D59"),
+                        AppbarBackground = new MudColor("#edf4f7"),
                         Primary = new MudColor("#003D59"),
                         Secondary = new MudColor("#013243"),
                         Tertiary = new MudColor("#007BA7"),

@@ -8,7 +8,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="8.*" />
+    <PackageReference Include="MudBlazor" Version="8.5.1" />
     <PackageReference Include="Syncfusion.Blazor.Charts" Version="29.1.35" />
     <PackageReference Include="Syncfusion.Blazor.Core" Version="29.1.35" />
     <PackageReference Include="Syncfusion.Blazor.Grid" Version="29.1.35" />
