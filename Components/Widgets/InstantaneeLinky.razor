@@ -4,7 +4,7 @@
 @inject IInfosConsoService InfosConsoService
 
 
-<MudCard Class="card-custom-style" style="height:100%">
+<MudCard Class="card-custom-style" Style="height:100%">
     <MudCardHeader>
         <CardHeaderContent>
             <MudText Class="mt-0 pt-0" Typo="Typo.h6">Instantanée LINKY</MudText>
@@ -17,10 +17,10 @@
         <MudGrid Class="pa-0">
             @if (infoLinky != null)
             {
-                <MudItem xs="9" Class="d-flex justify-start pb-1">
+                <MudItem xs="8" Class="d-flex justify-start pb-1">
                     <MudText Typo="Typo.body1" Color="Color.Info">Puissance consommée</MudText>
                 </MudItem>
-                <MudItem xs="3" Class="d-flex justify-end pb-1">
+                <MudItem xs="4" Class="d-flex justify-end pb-1">
                     <MudText Style="font-weight: bold;" Typo="Typo.body1" Color="Color.Info">@(infoLinky.Puissance) W</MudText>
                 </MudItem>
 
@@ -39,21 +39,21 @@
                 </MudItem>
 
                 <MudItem xs="9" Class="d-flex justify-start pb-1 pt-0">
-                    <MudText Typo="Typo.body1" Color="Color.Info">Index Compteur Global</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Info">Index Global</MudText>
                 </MudItem>
                 <MudItem xs="3" Class="d-flex justify-end pb-1 pt-0">
                     <MudText Typo="Typo.body1" Color="Color.Info">@(infoLinky.IndexTotal)</MudText>
                 </MudItem>
 
                 <MudItem xs="9" Class="d-flex justify-start pb-1 pt-0">
-                    <MudText Typo="Typo.body1" Color="Color.Info">Index Compteur Heures Pleines</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Info">Index Heures Pleines</MudText>
                 </MudItem>
                 <MudItem xs="3" Class="d-flex justify-end pb-1 pt-0">
                     <MudText Typo="Typo.body1" Color="Color.Info">@(infoLinky.IndexHp)</MudText>
                 </MudItem>
 
                 <MudItem xs="9" Class="d-flex justify-start pb-1 pt-0">
-                    <MudText Typo="Typo.body1" Color="Color.Info">Index Compteur Heures Creuses</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Info">Index Heures Creuses</MudText>
                 </MudItem>
                 <MudItem xs="3" Class="d-flex justify-end pb-1 pt-0">
                     <MudText Typo="Typo.body1" Color="Color.Info">@(infoLinky.IndexHc)</MudText>

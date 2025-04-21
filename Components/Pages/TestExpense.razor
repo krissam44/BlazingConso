@@ -2,7 +2,8 @@
 
 <MudText Class="d-flex align-left justify-left" Typo="Typo.h6">TestExpense</MudText>
 
-<MudPaper Elevation="0" Class="d-flex flex-column" Style="height: 100vh; overflow: hidden; min-height: calc(100vh - 46px); width: calc(100vw - 450px);">
+<MudPaper Elevation="0" Class="d-flex flex-column mt-4"
+          Style=" overflow: hidden; min-height: calc(100vh - 110px); width: calc(100vw - 450px); background-color: #edf4f7">
     <!-- Contenu scrollable -->
         <MudGrid Spacing="6">
             @*---------------------------------------------- Instantanée lINKY ---------------------------------------------------*@
@@ -27,17 +28,27 @@
 
             @*------------------------------------- Toutes les journées du mois en cours -----------------------------------------*@
             <MudItem xs="12" md="7">
-                <Conso30Chart GridHeight="700" />
+                <Conso30Chart GridHeight="600" />
             </MudItem>
 
             @*----------------------------------------- ConsoChart ----------------------------------------------*@
             <MudItem xs="12" md="5">
-                <ConsoBy3HChart ChartHeight="700" />
+                <ConsoBy3HChart ChartHeight="800" />
             </MudItem>
+
+        @*------------------------------------- Toutes les journées du mois en cours -----------------------------------------*@
+        <MudItem xs="12" md="7">
+            <Conso30Chart GridHeight="600" />
+        </MudItem>
+
+        @*----------------------------------------- ConsoChart ----------------------------------------------*@
+        <MudItem xs="12" md="5">
+            <ConsoBy3HChart ChartHeight="800" />
+        </MudItem>
         </MudGrid>
 
     <!-- Contenu fixe à droite -->
-    <MudPaper Elevation="8" Class="d-flex flex-row " Style="width: 250px; position: fixed; top: 0; right: 0; height: 100vh; background-color:aliceblue">
+    <MudPaper Elevation="4" Class="d-flex flex-row " Style="width: 250px; position: fixed; top: 0; right: 0; height: 100vh; background-color:white">
         <!-- Composants MudBlazor ici -->
         <p>Ceci est un autre texte dans la colonne de droite</p>
     </MudPaper>

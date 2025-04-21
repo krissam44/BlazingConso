@@ -142,7 +142,7 @@ public partial class MainLayout
                         H6 = new H6Typography
                         {
                             FontFamily = new[] { "Roboto", "Tahoma", "Verdana", "Arial", "sans-serif" },
-                            FontSize = "1.20rem",
+                            FontSize = "1.15rem",
                             FontWeight = "400",
                             LineHeight = "1",
                             LetterSpacing = ".0070em"
@@ -158,18 +158,18 @@ public partial class MainLayout
                         Body1 = new Body1Typography
                         {
                             FontFamily = new[] { "Roboto", "Montserrat", "Helvetica", "Arial", "sans-serif" },
-                            FontSize = "1rem",
+                            FontSize = "0.95rem",
                             FontWeight = "400",
                             LineHeight = "1.1",
-                            LetterSpacing = ".0070em"
+                            LetterSpacing = ".0068em"
                         },
                         Body2 = new Body2Typography
                         {
                             FontFamily = new[] { "Roboto", "Tahoma", "Verdana", "Montserrat", "Helvetica", "Arial", "sans-serif" },
-                            FontSize = "0.90rem",
+                            FontSize = "0.85rem",
                             FontWeight = "400",
                             LineHeight = "1.05",
-                            LetterSpacing = ".0070em"
+                            LetterSpacing = ".0068em"
                         },
                         Caption = new CaptionTypography
                         {
