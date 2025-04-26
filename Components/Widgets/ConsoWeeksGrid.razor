@@ -1,0 +1,51 @@
+﻿@using BlazingConso.Entities
+@using Syncfusion.Blazor.Grids
+@using System.Globalization
+
+
+<MudCard Class="card-custom-style" Style="height:100%">
+    <MudCardHeader Class="mud-card-header">
+        <CardHeaderContent>
+            <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">Tableau de consommation hebdomadaire</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+
+    <MudCardContent Class="pt-1">
+        <SfGrid @ref="ConsoWeekGrid" TValue="ConsoWeek" DataSource="@ConsoWeeks" AllowPaging="false" RowHeight="28" Height="@GridHeight">
+            <GridColumns>
+                <GridColumn HeaderText="Période" TextAlign="TextAlign.Center">
+                    <GridColumns>
+                        <GridColumn Field=@nameof(ConsoWeek.Semaine) HeaderText="Semaine" Width="81" TextAlign="TextAlign.Center"></GridColumn>
+                        <GridColumn Field=@nameof(ConsoWeek.Annee) HeaderText="Année" Format="d" Width="71" TextAlign="TextAlign.Center"></GridColumn>
+                    </GridColumns>
+                </GridColumn>
+
+                <GridColumn HeaderText="Consommation (kWh)" TextAlign="TextAlign.Center">
+                    <GridColumns>
+                        <GridColumn Field=@nameof(ConsoWeek.ConsoHPkWh) HeaderText="HP" Format="N2" TextAlign="TextAlign.Center" Width="101"></GridColumn>
+                        <GridColumn Field=@nameof(ConsoWeek.ConsoHCkWh) HeaderText="HC" Format="N2" TextAlign="TextAlign.Center" Width="101"></GridColumn>
+                        <GridColumn Field=@nameof(ConsoWeek.ConsoTotaleKWh) HeaderText="Totale" Format="N2" TextAlign="TextAlign.Center" Width="103"></GridColumn>
+                    </GridColumns>
+                </GridColumn>
+
+                <GridColumn HeaderText="Coûts (€)" TextAlign="TextAlign.Center">
+                    <GridColumns>
+                        <GridColumn Field=@nameof(ConsoWeek.CoutConsommationHP) HeaderText="HP" Format="N2" TextAlign="TextAlign.Center" Width="101"></GridColumn>
+                        <GridColumn Field=@nameof(ConsoWeek.CoutConsommationHC) HeaderText="HC" Format="N2" TextAlign="TextAlign.Center" Width="101"></GridColumn>
+                        <GridColumn Field=@nameof(ConsoWeek.CoutTotal) HeaderText="Totale" Format="N2" TextAlign="TextAlign.Center" Width="103"></GridColumn>
+                    </GridColumns>
+                </GridColumn>
+            </GridColumns>
+        </SfGrid>
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+
+    [Parameter] public IEnumerable<ConsoWeek> ConsoWeeks { get; set; }
+    [Parameter] public string GridHeight { get; set; } = "480px";
+    [Parameter] public string[] ToolbarItems { get; set; } = new string[] { "ColumnChooser" };
+
+    private SfGrid<ConsoWeek> ConsoWeekGrid;
+}

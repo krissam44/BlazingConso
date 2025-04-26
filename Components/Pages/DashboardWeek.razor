@@ -1,11 +1,179 @@
 ﻿@page "/dashboard-week"
 
-<article class="prose">
-    <h1>Dashboard Week</h1>
-    <br />
-    <p>Not yet implemented</p>
-</article>
+@using System.Globalization
+@using BlazingConso.Dtos
+@using BlazingConso.Entities
+@using BlazingConso.Enums
+
+@inject IConsoWeekRepository consoWeekRepository
+
+<ResizeHandler OnHeightChanged="@HandleResize" />
+
+<MudText Class="d-flex align-left justify-left " Typo="Typo.h6">Semaines</MudText>
+
+<MudContainer Class="mt-6 px-0" MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudCard Class="card-custom-style" style="height:100%">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">
+                            Consommations Hebdomadaires
+                        </MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudGrid Class="pt-0">
+                        <MudItem xs="2">
+                            @* ---- startWeek -----*@    
+                            <MudNumericField @bind-Value="startWeek" Label="Semaine Début" Min="1" Max="53" />
+                        </MudItem>
+                        <MudItem xs="2">
+                            @* ---- endWeek -----*@
+                            <MudNumericField @bind-Value="endWeek" Label="Semaine Fin" Min="1" Max="53" />
+                        </MudItem>
+                        <MudItem xs="2">
+                            @* ---- year -----*@
+                            <MudNumericField @bind-Value="year" Label="Année" Min="2020" Max="2100" />
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudSelect T="ModeAffichage" @bind-Value="Mode" Label="Unité d'affichage du Graphe">
+                                <MudSelectItem Value="ModeAffichage.kWh">kWh</MudSelectItem>
+                                <MudSelectItem Value="ModeAffichage.Euros">€</MudSelectItem>
+                            </MudSelect>
+                            @*<SfSwitch @bind-Checked="isKWhMode" ValueChanged="OnSwitchChanged"  OnLabel="kWh" OffLabel="€"></SfSwitch>*@
+                            @*<MudSwitch T="bool" @bind-Checked="isKWhMode" Color="Color.Success" UncheckedColor="Color.Error">Graphe en @(isKWhMode ? "kWh" : "€")</MudSwitch>*@
+                        </MudItem>
+                        <MudItem xs="2" Class="d-flex justify-center align-center">
+                            <MudButton OnClick="@LoadData"
+                            Variant="Variant.Filled" Color="Color.Primary">
+                                Appliquer
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        @if (hasLoadedOnce && !isDataReady)
+        {
+            <p>Chargement des données...</p>
+        }
+        else if (hasLoadedOnce && consoWeeks.Count() == 0)
+        {
+            <p>Aucune donnée trouvée pour ce mois.</p>
+        }
+        else if (hasLoadedOnce)
+        {
+            <MudItem xs="6" sm="6" Style="height:90%">
+                <ConsoWeeksGrid ConsoWeeks="@consoWeeks" GridHeight="@GridHeight" />
+            </MudItem>
+            <MudItem xs="6" sm="6" Style="height:90%">
+                <ConsoWeeksChart ConsoChartData="@consoChartData" CoutChartData="@coutChartData" 
+                    ModeAffichage="@Mode" ChartTitle="@ChartTitle" Year="@year" ChartHeight="@ChartHeight" />
+            </MudItem>
+        }
+
+    </MudGrid>
+</MudContainer>
+
 
 @code {
+    private int startWeek = 1;
+    private int endWeek = GetWeekOfYear(DateTime.Today);
+    private int year = DateTime.Today.Year;
+
+    private ModeAffichage Mode = ModeAffichage.kWh;
+    private bool isAffichagekWh
+    {
+        get => Mode == ModeAffichage.kWh;
+        set => Mode = value ? ModeAffichage.kWh : ModeAffichage.Euros;
+    }
+
+    private string ChartTitle => Mode == ModeAffichage.kWh
+    ? $"Consommation en kWh des semaines {startWeek} à {endWeek} pour l'année {year}"
+    : $"Coûts Consommation sans abonnement (€) des semaines {startWeek} à {endWeek} pour l'année {year}";
+    
+    private bool isAffichageKWhMode = true; 
+    private string[] chartLabels = new string[] { "Semaine", "kWh", "€" };
+
+    private string GridHeight = "400px";
+    private string ChartHeight = "620px";
+
+    private bool hasLoadedOnce = false;
+    private bool isDataReady = false;
+
+    private IEnumerable<ConsoWeek> consoWeeks = new List<ConsoWeek>();
+    private List<ConsoWeek> consoGridData { get; set; } = new();
+    // ----- Liste des données de consommation pour le graphique version consommation
+    private List<WeeklyChartConsoDto> consoChartData { get; set; } = new();
+    // ----- Liste des données de consommation pour le graphique version coût
+    private List<WeeklyChartCoutDto> coutChartData { get; set; } = new();
+
+
+
+    // ---------------------------------------------------------------------------------------------------
+    private async void LoadData()
+    {
+        isDataReady = false; // on indique qu'on est en train de charger
+        hasLoadedOnce = true;
+
+        try
+        {
+            consoWeeks = await consoWeekRepository.GetConsoWeeksAsync(startWeek, endWeek, year);
+
+            consoChartData = consoWeeks.Select(cw => new WeeklyChartConsoDto
+                {
+                    Week = cw.Semaine,
+                    Year = cw.Annee,
+                    ConsoHPkWh = cw.ConsoHPkWh,
+                    ConsoHCkWh = cw.ConsoHCkWh,
+                }).ToList();
+
+            coutChartData = consoWeeks.Select(cw => new WeeklyChartCoutDto
+                {
+                    Week = cw.Semaine,
+                    Year = cw.Annee,
+                    CoutConsommationHP = cw.CoutConsommationHP,
+                    CoutConsommationHC = cw.CoutConsommationHC,
+                }).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Erreur de chargement : {ex.Message}");
+        }
+
+        isDataReady = true;
+        StateHasChanged();
+    }
+
+
+    // ---------------------------------------------------------------------------------------------------
+    protected override async Task OnInitializedAsync()
+    {
+        LoadData();
+    }
+
+
+    // ---------------------------------------------------------------------------------------------------
+    private static int GetWeekOfYear(DateTime date)
+    {
+        var culture = CultureInfo.CurrentCulture;
+        return culture.Calendar.GetWeekOfYear(
+            date,
+            CalendarWeekRule.FirstFourDayWeek,
+            DayOfWeek.Monday);
+    }
+
+    // ---------------------------------------------------------------------------------------------------
+    private void HandleResize(int availableHeight)
+    {
+        var gridUsableHeight = availableHeight - 360;
+        var chartUsableHeight = availableHeight - 300;
+
+        GridHeight = $"{gridUsableHeight}px";
+        ChartHeight = $"{chartUsableHeight}px";
+        StateHasChanged();
+    }
 
 }

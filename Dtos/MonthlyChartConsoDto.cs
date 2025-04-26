@@ -1,6 +1,6 @@
-﻿namespace BlazingConso.Entities
+﻿namespace BlazingConso.Dtos
 {
-    public class MonthChartConsoDto
+    public class MonthlyChartConsoDto
     {
         public string Periode { get; set; }
 

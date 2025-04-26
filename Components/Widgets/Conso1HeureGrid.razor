@@ -2,103 +2,113 @@
 @using Syncfusion.Blazor.Grids
 @using System.Globalization
 
-<SfGrid @ref="ConsoGridRef" TValue="ConsoHoraire" DataSource="@consoGridData" AllowPaging="false" AllowTextWrap="true" RowHeight="25" Width="100%" Height="@GridHeight" EnableHtmlSanitizer="false">
-    <GridPageSettings PageSize=15></GridPageSettings>
-    <GridAggregates>
-        <GridAggregate>
-            <GridAggregateColumns>
-                <GridAggregateColumn Field="@nameof(ConsoHoraire.TrancheHoraire)" Type="Syncfusion.Blazor.Grids.AggregateType.Count" Format="N0">
-                    <FooterTemplate>
-                        @{
-                            <div>Totaux</div>
-                        }
-                    </FooterTemplate>
-                </GridAggregateColumn>
-                <GridAggregateColumn Field="@nameof(ConsoHoraire.TotalConso)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="N0">
-                    <FooterTemplate>
-                        @{
-                            var SumValue = (context as AggregateTemplateContext);
-                            <div>
-                                @SumValue.Sum
-                            </div>
-                        }
-                    </FooterTemplate>
-                </GridAggregateColumn>
-                <GridAggregateColumn Field="@nameof(ConsoHoraire.coutConsommation)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="N2">
-                    <FooterTemplate>
-                        @{
-                            var SumValue = (context as AggregateTemplateContext);
-                            <div>
-                                @SumValue.Sum
-                            </div>
-                        }
-                    </FooterTemplate>
-                </GridAggregateColumn>
-            </GridAggregateColumns>
-        </GridAggregate>
-        <GridAggregate>
-            <GridAggregateColumns>
-                <GridAggregateColumn Field="@nameof(ConsoHoraire.TrancheHoraire)" Type="Syncfusion.Blazor.Grids.AggregateType.Count" Format="N0">
-                    <FooterTemplate>
-                        @{
-                            <div>Moyenne</div>
-                        }
-                    </FooterTemplate>
-                </GridAggregateColumn>
-                <GridAggregateColumn Field="@nameof(ConsoHoraire.TotalConso)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="N0">
-                    <FooterTemplate>
-                        @{
-                            var AverageValue = (context as AggregateTemplateContext);
-                            <div>
-                                @AverageValue.Average
-                            </div>
-                        }
-                    </FooterTemplate>
-                </GridAggregateColumn>
-                <GridAggregateColumn Field="@nameof(ConsoHoraire.PowerMax)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="N0">
-                    <FooterTemplate>
-                        @{
-                            var AverageValue = (context as AggregateTemplateContext);
-                            <div>
-                                @AverageValue.Average
-                            </div>
-                        }
-                    </FooterTemplate>
-                </GridAggregateColumn>
-                <GridAggregateColumn Field="@nameof(ConsoHoraire.PowerMin)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="N0">
-                    <FooterTemplate>
-                        @{
-                            var AverageValue = (context as AggregateTemplateContext);
-                            <div>
-                                @AverageValue.Average
-                            </div>
-                        }
-                    </FooterTemplate>
-                </GridAggregateColumn>
-                <GridAggregateColumn Field="@nameof(ConsoHoraire.coutConsommation)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="N2">
-                    <FooterTemplate>
-                        @{
-                            var AverageValue = (context as AggregateTemplateContext);
-                            <div>
-                                @AverageValue.Average
-                            </div>
-                        }
-                    </FooterTemplate>
-                </GridAggregateColumn>
-            </GridAggregateColumns>
-        </GridAggregate>
-    </GridAggregates>
-    <GridColumns>
-        <GridColumn Field=@nameof(ConsoHoraire.TrancheHoraire) HeaderText="Tranche Horaire" TextAlign="TextAlign.Center" Width="120" />
+<MudCard Class="card-custom-style" Style="height:100%">
+    <MudCardHeader Class="mud-card-header">
+        <CardHeaderContent>
+            <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">Détail de la consommation d'une journée</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
 
-        <GridColumn Field=@nameof(ConsoHoraire.TotalConso) HeaderText="Consommation (Wh)" Format="N0" TextAlign="TextAlign.Center" Width="128"></GridColumn>
-        <GridColumn Field=@nameof(ConsoHoraire.PowerMax) HeaderText="Puissance Max (VA)" Format="N0" TextAlign="TextAlign.Center" Width="128"></GridColumn>
-        <GridColumn Field=@nameof(ConsoHoraire.PowerMin) HeaderText="Puissance Min (VA)" Format="N0" TextAlign="TextAlign.Center" Width="128"></GridColumn>
+    <MudCardContent Class="pt-1">
+        <SfGrid @ref="ConsoGridRef" TValue="ConsoHoraire" DataSource="@consoGridData" AllowPaging="false" AllowTextWrap="true" RowHeight="25" Width="100%" Height="@GridHeight" >
+            <GridPageSettings PageSize=15></GridPageSettings>
+            <GridAggregates>
+                <GridAggregate>
+                    <GridAggregateColumns>
+                        <GridAggregateColumn Field="@nameof(ConsoHoraire.TrancheHoraire)" Type="Syncfusion.Blazor.Grids.AggregateType.Count" Format="N0">
+                            <FooterTemplate>
+                                @{
+                                    <div>Totaux</div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                        <GridAggregateColumn Field="@nameof(ConsoHoraire.TotalConso)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="N0">
+                            <FooterTemplate>
+                                @{
+                                    var SumValue = (context as AggregateTemplateContext);
+                                    <div>
+                                        @SumValue.Sum
+                                    </div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                        <GridAggregateColumn Field="@nameof(ConsoHoraire.coutConsommation)" Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="N2">
+                            <FooterTemplate>
+                                @{
+                                    var SumValue = (context as AggregateTemplateContext);
+                                    <div>
+                                        @SumValue.Sum
+                                    </div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                    </GridAggregateColumns>
+                </GridAggregate>
+                <GridAggregate>
+                    <GridAggregateColumns>
+                        <GridAggregateColumn Field="@nameof(ConsoHoraire.TrancheHoraire)" Type="Syncfusion.Blazor.Grids.AggregateType.Count" Format="N0">
+                            <FooterTemplate>
+                                @{
+                                    <div>Moyenne</div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                        <GridAggregateColumn Field="@nameof(ConsoHoraire.TotalConso)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="N0">
+                            <FooterTemplate>
+                                @{
+                                    var AverageValue = (context as AggregateTemplateContext);
+                                    <div>
+                                        @AverageValue.Average
+                                    </div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                        <GridAggregateColumn Field="@nameof(ConsoHoraire.PowerMax)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="N0">
+                            <FooterTemplate>
+                                @{
+                                    var AverageValue = (context as AggregateTemplateContext);
+                                    <div>
+                                        @AverageValue.Average
+                                    </div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                        <GridAggregateColumn Field="@nameof(ConsoHoraire.PowerMin)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="N0">
+                            <FooterTemplate>
+                                @{
+                                    var AverageValue = (context as AggregateTemplateContext);
+                                    <div>
+                                        @AverageValue.Average
+                                    </div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                        <GridAggregateColumn Field="@nameof(ConsoHoraire.coutConsommation)" Type="Syncfusion.Blazor.Grids.AggregateType.Average" Format="N2">
+                            <FooterTemplate>
+                                @{
+                                    var AverageValue = (context as AggregateTemplateContext);
+                                    <div>
+                                        @AverageValue.Average
+                                    </div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                    </GridAggregateColumns>
+                </GridAggregate>
+            </GridAggregates>
+            <GridColumns>
+                <GridColumn Field=@nameof(ConsoHoraire.TrancheHoraire) HeaderText="Tranche Horaire" TextAlign="TextAlign.Center" Width="120" />
 
-        <GridColumn Field=@nameof(ConsoHoraire.coutConsommation) HeaderText="Coût (€)" Format="N2" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                <GridColumn Field=@nameof(ConsoHoraire.TotalConso) HeaderText="Consommation (Wh)" Format="N0" TextAlign="TextAlign.Center" Width="128"></GridColumn>
+                <GridColumn Field=@nameof(ConsoHoraire.PowerMax) HeaderText="Puissance Max (VA)" Format="N0" TextAlign="TextAlign.Center" Width="128"></GridColumn>
+                <GridColumn Field=@nameof(ConsoHoraire.PowerMin) HeaderText="Puissance Min (VA)" Format="N0" TextAlign="TextAlign.Center" Width="128"></GridColumn>
 
-    </GridColumns>
-</SfGrid>
+                <GridColumn Field=@nameof(ConsoHoraire.coutConsommation) HeaderText="Coût (€)" Format="N2" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+
+            </GridColumns>
+        </SfGrid>
+    </MudCardContent>
+</MudCard>
 
 
 @code {
@@ -110,26 +120,20 @@
 }
 
 <style>
-    .e-grid {
-        font-family: "Roboto", "Montserrat", "Helvetica", "Arial", "sans-serif";
+
+    .mud-card-header {
+        padding-top: 6px;
+        padding-right: 16px;
+        padding-bottom: 4px;
+        padding-left: 16px;
     }
 
-        .e-grid .e-headercelldiv {
-            font-size: 13px;
-        }
+    .e-grid .e-headercelldiv {
+        font-size: 13px;
+    }
 
-        .e-grid .e-altrow {
-            background-color: #4a86ff;
-        }
-
-        .e-grid .e-rowcell {
-            font-size: 13px;
-        }
-
-    .e-grid .e-summarycell {
-        font-size: 14px;
-        padding-top: 4px;
-        padding-bottom: 4px;
+    .e-grid .e-rowcell {
+        font-size: 13px;
     }
 
 </style>

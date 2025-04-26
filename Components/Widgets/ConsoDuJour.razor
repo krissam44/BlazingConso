@@ -19,7 +19,7 @@
                     <MudText Typo="Typo.body1" Color="@Color.Success">Consommation</MudText>
                 </MudItem>
                 <MudItem xs="5" Class="d-flex justify-end pb-1">
-                    <MudText Style="font-weight: bold;" Typo="Typo.body1" Color="@Color.Success">@(((double)consoToday.ConsoJourTotal / 1000).ToString("F2")) kWh</MudText>
+                    <MudText Style="font-weight: bold;" Typo="Typo.body1" Color="@Color.Success">@(consoToday.ConsoJourTotalkWh.Value.ToString("F2")) kWh</MudText>
                 </MudItem>
 
                 <MudItem xs="6" Class="d-flex justify-start pb-1 pt-0">

@@ -1,0 +1,114 @@
+﻿@using System.Globalization
+@using BlazingConso.Dtos
+@using BlazingConso.Entities
+@using BlazingConso.Enums
+@using Syncfusion.Blazor.Charts
+
+<MudCard Class="card-custom-style" Style="height:100%">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">@ChartTitle</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+
+    <MudCardContent>
+        <SfChart Width="100%" Height="450px">
+
+            <ChartMargin Top="20" Bottom="0" Left="10" Right="10"></ChartMargin>
+
+            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+            </ChartPrimaryXAxis>
+
+            <ChartPrimaryYAxis Title="@TitleY"
+                               LabelFormat="@LabelFormat">
+            </ChartPrimaryYAxis>
+
+            @if (ModeAffichage == ModeAffichage.kWh)
+            {
+                @* ------------------------------------ Graphe kWH ------------------------------------ *@
+                <ChartSeriesCollection>
+
+                    <ChartSeries DataSource="@weeklyConsoChartData"
+                    XName="JourSemaine" YName="ConsoSemaineMoins2"
+                    Type="ChartSeriesType.Column"
+                    Name="Semaine -2"
+                    CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                    ColumnWidth="0.9"
+                    Fill="#FB8C00">
+                    </ChartSeries>
+
+                    <ChartSeries DataSource="@weeklyConsoChartData"
+                    XName="JourSemaine" YName="ConsoSemaineMoins1"
+                    Type="ChartSeriesType.Column"
+                    Name="Semaine -1"
+                    CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                    ColumnWidth="0.9"
+                    Fill="#43A047">
+                    </ChartSeries>
+
+                    <ChartSeries DataSource="@weeklyConsoChartData"
+                    XName="JourSemaine" YName="ConsoSemaine0"
+                    Type="ChartSeriesType.Column"
+                    Name="Cette semaine"
+                    CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                    ColumnWidth="0.9"
+                    Fill="#1E88E5">
+                    </ChartSeries>
+
+                </ChartSeriesCollection>
+            }
+            else
+            {
+                @* ------------------------------------ Graphe € ------------------------------------ *@
+                <ChartSeriesCollection>
+
+                    <ChartSeries DataSource="@weeklyCoutChartData"
+                                 XName="JourSemaine" YName="CoutSemaineMoins2"
+                                 Type="ChartSeriesType.Column"
+                                 Name="Semaine -2"
+                                 CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                                 ColumnWidth="0.9"
+                                 Fill="#bf2b07">
+                    </ChartSeries>
+
+                    <ChartSeries DataSource="@weeklyCoutChartData"
+                                 XName="JourSemaine" YName="CoutSemaineMoins1"
+                                 Type="ChartSeriesType.Column"
+                                 Name="Semaine -1"
+                                 CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                                 ColumnWidth="0.9"
+                                 Fill="#52bf07">
+                    </ChartSeries>
+
+                    <ChartSeries DataSource="@weeklyCoutChartData"
+                                 XName="JourSemaine" YName="CoutSemaine0"
+                                 Type="ChartSeriesType.Column"
+                                 Name="Cette semaine"
+                                 CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                                 ColumnWidth="0.9"
+                                 Fill="#8dc5e8">
+                    </ChartSeries>
+
+                </ChartSeriesCollection>
+            }
+
+            <ChartCrosshairSettings Enable="true" DashArray="2,3" LineType="LineType.Vertical"></ChartCrosshairSettings>
+
+            <ChartTooltipSettings Enable="true" Header="<b>${point.x}</b>" Format="<b>Consommation : ${point.y}</b>" EnableHighlight="true"></ChartTooltipSettings>
+
+        </SfChart>
+
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+    [Parameter] public List<WeeklyComparaisonConsoDto> weeklyConsoChartData { get; set; }
+    [Parameter] public List<WeeklyComparaisonCoutDto> weeklyCoutChartData { get; set; }
+
+    [Parameter] public ModeAffichage ModeAffichage { get; set; }
+
+    private string ChartTitle => ModeAffichage == ModeAffichage.kWh ? "Comparaison sur 3 semaines des Consommations (kWh)" : "Comparaison sur 3 semaines des Coûts sans abonnement (€)";
+    private string TitleY => ModeAffichage == ModeAffichage.kWh ? "Consommation (kWh)" : "Coût (Euros)";
+    private string LabelFormat => ModeAffichage == ModeAffichage.kWh ? "{value} kWh" : "{value} €";
+}

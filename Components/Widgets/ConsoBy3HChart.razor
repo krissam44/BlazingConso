@@ -3,7 +3,7 @@
 @using Syncfusion.Blazor.Charts
 @inject IInfosConsoService InfosConsoService
 
-<MudCard Style="width: 100%;">
+<MudCard Class="card-custom-style" Style="height:100% width: 100%">
     <MudCardHeader>
         <CardHeaderContent>
             <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">Répartition de la consommation par tranche de 3H</MudText>
@@ -94,5 +94,13 @@
         IsLoading = false;
         StateHasChanged();
     }
-      
+
 }
+
+<style>
+.e-chart {
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: white; /* optionnel selon ton style */
+    }
+</style>

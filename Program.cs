@@ -41,6 +41,7 @@ builder.Services.AddScoped<IConsoDayService, ConsoDayService>();
 builder.Services.AddScoped<IInfosCoutsService, InfosCoutsService>();
 builder.Services.AddScoped<IConso30Service, Conso30Service>();
 builder.Services.AddScoped<IConsoMonthService, ConsoMonthService>();
+builder.Services.AddScoped<IConsoWeekRepository, ConsoWeekRepository>();
 builder.Services.AddSingleton<MoisState>();
 
 // ----- Add services to the container.

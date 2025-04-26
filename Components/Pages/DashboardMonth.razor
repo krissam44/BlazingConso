@@ -1,6 +1,7 @@
 ﻿@page "/dashboard-month"
 
 @using System.Globalization
+@using BlazingConso.Dtos
 @using BlazingConso.Entities
 @using BlazingConso.Enums
 
@@ -11,9 +12,9 @@
 <MudText Class="d-flex align-left justify-left " Typo="Typo.h6">Mois</MudText>
 
 <MudContainer Class="mt-6 px-0" MaxWidth="MaxWidth.ExtraLarge">
-    <MudGrid>
+    <MudGrid Spacing="4">
         <MudItem xs="12">
-            <MudCard Class="card-custom-style" style="height:100%">
+            <MudCard Class="card-custom-style">
                 <MudCardHeader>
                     <CardHeaderContent>
                         <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">
@@ -21,6 +22,7 @@
                         </MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
+
                 <MudCardContent>
                     <MudGrid Class="pt-0">
                         <MudItem xs="2">
@@ -60,11 +62,12 @@
                                 <MudSelectItem Value="ModeAffichage.kWh">kWh</MudSelectItem>
                                 <MudSelectItem Value="ModeAffichage.Euros">€</MudSelectItem>
                             </MudSelect>
-                            @*<SfSwitch @bind-Checked="isKWhMode" ValueChanged="OnSwitchChanged"  OnLabel="kWh" OffLabel="€"></SfSwitch>*@
-                            @*<MudSwitch T="bool" @bind-Checked="isKWhMode" Color="Color.Success" UncheckedColor="Color.Error">Graphe en @(isKWhMode ? "kWh" : "€")</MudSwitch>*@
                         </MudItem>
                         <MudItem xs="2" Class="d-flex justify-center align-center">
-                            <MudButton OnClick="@LoadData" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Upload" Color="Color.Success">Charger</MudButton>
+                            <MudButton OnClick="@LoadData"
+                                       Variant="Variant.Filled" Color="Color.Primary">
+                                Appliquer
+                            </MudButton>
                         </MudItem>
                     </MudGrid>
                 </MudCardContent>
@@ -99,16 +102,21 @@
     private int endYear = DateTime.Today.Year;
 
     private ModeAffichage Mode = ModeAffichage.kWh;
+    private bool isAffichagekWh
+    {
+        get => Mode == ModeAffichage.kWh;
+        set => Mode = value ? ModeAffichage.kWh : ModeAffichage.Euros;
+    }
 
     private IEnumerable<ConsoMonth> consoMonths = new List<ConsoMonth>();
     // ----- Liste des données de consommation pour le graphique version consommation
-    private List<MonthChartConsoDto> consoChartData { get; set; } = new();
+    private List<MonthlyChartConsoDto> consoChartData { get; set; } = new();
     // ----- Liste des données de consommation pour le graphique version coût
-    private List<MonthChartCoutDto> coutChartData { get; set; } = new();
+    private List<MonthlyChartCoutDto> coutChartData { get; set; } = new();
 
     private SfGrid<ConsoMonth> ConsoMonth;
     private string GridHeight = "400px";
-    private string ChartHeight = "620px";
+    private string ChartHeight = "400px";
     public string[] ToolbarItems = new string[] { "ColumnChooser" };
 
     private bool isDataReady = false;
@@ -155,8 +163,8 @@
     // ---------------------------------------------------------------------------------------------------
     private void HandleResize(int availableHeight)
     {
-        var gridUsableHeight = availableHeight - 400;
-        var chartUsableHeight = availableHeight - 250;
+        var gridUsableHeight = availableHeight - 440;
+        var chartUsableHeight = availableHeight - 325;
 
         GridHeight = $"{gridUsableHeight}px";
         ChartHeight = $"{chartUsableHeight}px";
@@ -190,42 +198,22 @@
     {
         try
         {
-            var rawData = await ConsoMonthService.GetConsoMonthsOfYearAsync(startMonth, startYear, endMonth, endYear);
+            consoMonths = await ConsoMonthService.GetConsoMonthsOfYearAsync(startMonth, startYear, endMonth, endYear);
 
-            // Conversion des valeurs de Wh en kWh
-            consoMonths = rawData.Select(cm => new ConsoMonth
-            {
-                annee = cm.annee,
-                mois = cm.mois,
-                nomMois = cm.nomMois,
-                consoHP = cm.consoHP.HasValue ? cm.consoHP.Value / 1000m : (decimal?)null,
-                consoHC = cm.consoHC.HasValue ? cm.consoHC.Value / 1000m : (decimal?)null,
-                consoTotale = cm.consoTotale.HasValue ? cm.consoTotale.Value / 1000m : (decimal?)null,
-                consoMoyenne = cm.consoMoyenne.HasValue ? cm.consoMoyenne.Value / 1000m : (decimal?)null,
-                consoMax = cm.consoMax.HasValue ? cm.consoMax.Value / 1000m : (decimal?)null,
-                consoMin = cm.consoMin.HasValue ? cm.consoMin.Value / 1000m : (decimal?)null,
-                jourMax = cm.jourMax,
-                jourMin = cm.jourMin,
-                coutAbonnement = cm.coutAbonnement,
-                coutConsommationHP = cm.coutConsommationHP,
-                coutConsommationHC = cm.coutConsommationHC,
-                coutTotal = cm.coutTotal
-            }).ToList();
+            consoChartData = consoMonths.Select(cm => new MonthlyChartConsoDto
+                {
+                    Periode = cm.periode,
+                    ConsoHP = cm.ConsoHPkWh,
+                    ConsoHC = cm.ConsoHCkWh
+                }).ToList();
 
-            consoChartData = rawData.Select(cm => new MonthChartConsoDto
-            {
-                Periode = cm.periode,
-                ConsoHP = cm.consoHP.HasValue ? cm.consoHP.Value / 1000m : null,
-                ConsoHC = cm.consoHC.HasValue ? cm.consoHC.Value / 1000m : null
-            }).ToList();
-
-            coutChartData = rawData.Select(cm => new MonthChartCoutDto
-            {
-                Periode = cm.periode,
-                CoutConsommationHP = cm.coutConsommationHP.HasValue ? cm.coutConsommationHP.Value : null,
-                CoutConsommationHC = cm.coutConsommationHC.HasValue ? cm.coutConsommationHC.Value : null,
-                CoutTotal = cm.coutTotal.HasValue ? cm.coutTotal.Value : null
-            }).ToList();
+            coutChartData = consoMonths.Select(cm => new MonthlyChartCoutDto
+                {
+                    Periode = cm.periode,
+                    CoutConsommationHP = cm.coutConsommationHP.HasValue ? cm.coutConsommationHP.Value : null,
+                    CoutConsommationHC = cm.coutConsommationHC.HasValue ? cm.coutConsommationHC.Value : null,
+                    CoutTotal = cm.coutTotal.HasValue ? cm.coutTotal.Value : null
+                }).ToList();
         }
         catch (Exception ex)
         {

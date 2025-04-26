@@ -1,6 +1,8 @@
 ﻿@page "/dashboard-1-jour"
 
+@using BlazingConso.Dtos
 @using BlazingConso.Entities
+@using BlazingConso.Enums
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor
 @using System.Globalization
@@ -12,7 +14,7 @@
 <MudText Class="d-flex align-left justify-left " Typo="Typo.h6">Détail d'un Jour</MudText>
 
 <MudContainer Class="mt-6 px-0" MaxWidth="MaxWidth.ExtraLarge">
-    <MudGrid>
+    <MudGrid Spacing="4">
         <MudItem xs="12">
             <MudCard Class="card-custom-style" style="height:100%">
                 <MudCardHeader>
@@ -27,20 +29,29 @@
                         <MudItem xs="2">
                             <MudDatePicker Label="Quelle journée ?" Editable="true" @bind-Date="dateJour" />
                         </MudItem>
-                        <MudItem xs="3" Class="d-flex justify-center align-center">
-                            <MudButton OnClick="@LoadData" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Upload" Color="Color.Success">Charger</MudButton>
+                        <MudItem xs="2">
+                            <MudSelect T="ModeAffichage" @bind-Value="Mode" Label="Unité d'affichage du Graphe">
+                                <MudSelectItem Value="ModeAffichage.kWh">kWh</MudSelectItem>
+                                <MudSelectItem Value="ModeAffichage.Euros">€</MudSelectItem>
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="2" Class="d-flex justify-center align-center">
+                            <MudButton OnClick="@LoadData"
+                                       Variant="Variant.Filled" Color="Color.Primary">
+                                Appliquer
+                            </MudButton>
                         </MudItem>
                     </MudGrid>
                 </MudCardContent>
             </MudCard>
         </MudItem>
 
-        <MudItem xs="5">
-            <Conso1HeureGrid consoGridData="@consoGridData" GridHeight="@GridHeight" ToolbarItems="@ToolbarItems" />
+        <MudItem xs="5" Style="height:85%">
+            <Conso1HeureGrid consoGridData="@consoHoraireData" GridHeight="@GridHeight" ToolbarItems="@ToolbarItems" />
         </MudItem>
 
-        <MudItem xs="7">
-            <Conso1HeureChart consoChartData="@consoChartData" ChartHeight="@ChartHeight" />
+        <MudItem xs="7" Style="height:85%">
+            <Conso1HeureChart consoChartData="@consoChartData" coutChartData="@coutChartData" ModeAffichage="@Mode" ChartHeight="@ChartHeight" />
         </MudItem>
 
     </MudGrid>
@@ -50,13 +61,22 @@
 @code {
     private DateTime? dateJour = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
+    private ModeAffichage Mode = ModeAffichage.kWh;
+    private bool isAffichagekWh
+    {
+        get => Mode == ModeAffichage.kWh;
+        set => Mode = value ? ModeAffichage.kWh : ModeAffichage.Euros;
+    }
+
     private string GridHeight = "400px";
     private string ChartHeight = "620px";
 
     private string[] ToolbarItems = new string[] { "ColumnChooser" };
 
-    private IEnumerable<ConsoHoraire> consoGridData = new List<ConsoHoraire>();
-    private List<HistoPeriodData> consoChartData { get; set; } = new();
+    private IEnumerable<ConsoHoraire> consoHoraireData = new List<ConsoHoraire>();
+
+    private List<HistoPeriodConsoDto> consoChartData { get; set; } = new();
+    private List<HistoPeriodCoutDto> coutChartData { get; set; } = new();
 
     private bool isLoading = false;
 
@@ -76,26 +96,31 @@
 
         try
         {
-            consoGridData = await InfosConsoService.GetConsoBy1H(dateJour.Value);
+            consoHoraireData = await InfosConsoService.GetConsoBy1H(dateJour.Value);
 
-            if (consoGridData != null && consoGridData.Any())
+            if (consoHoraireData != null && consoHoraireData.Any())
             {
-                consoChartData = consoGridData?.Where(cd => cd.TotalConso.HasValue) // Assurez-vous que TotalConso est valide
-                .Select(cd => new HistoPeriodData
-                {
-                    Periode = cd.TrancheHoraire,
-                    Consommation = cd.TotalConso.HasValue ? cd.TotalConso.Value / 1000m : 0m // Eviter une consommation nulle
-                }).ToList();
+                consoChartData = consoHoraireData.Select(cd => new HistoPeriodConsoDto
+                    {
+                        Periode = cd.TrancheHoraire,
+                        Consommation = cd.TotalConso.Value / 1000m
+                    }).ToList();
+
+                coutChartData = consoHoraireData.Select(cd => new HistoPeriodCoutDto
+                    {
+                        Periode = cd.TrancheHoraire,
+                        CoutConsommation = cd.coutConsommation
+                    }).ToList();
             }
             else
             {
-                consoChartData = new List<HistoPeriodData>();
+                consoChartData = new List<HistoPeriodConsoDto>();
             }
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine($"Erreur de chargement des données de consommation : {ex.Message}");
-            consoChartData = new List<HistoPeriodData>(); // éviter une liste null en cas d'erreur
+            consoChartData = new List<HistoPeriodConsoDto>(); // éviter une liste null en cas d'erreur
         }
 
         isLoading = false;
@@ -113,8 +138,8 @@
     // ---------------------------------------------------------------------------------------------------
     private void HandleResize(int availableHeight)
     {
-        var gridUsableHeight = availableHeight - 350;
-        var chartUsableHeight = availableHeight - 230;
+        var gridUsableHeight = availableHeight - 390;
+        var chartUsableHeight = availableHeight - 300;
 
         GridHeight = $"{gridUsableHeight}px";
         ChartHeight = $"{chartUsableHeight}px";

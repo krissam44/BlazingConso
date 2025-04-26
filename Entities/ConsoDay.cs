@@ -26,13 +26,13 @@ public class ConsoDay
     public long? IndexTotal { get; set; }
 
     [JsonPropertyName("consoJourHP")]
-    public int? ConsoJourHP { get; set; }
+    public decimal? ConsoJourHP { get; set; }
 
     [JsonPropertyName("consoJourHC")]
-    public int? ConsoJourHC { get; set; }
+    public decimal? ConsoJourHC { get; set; }
 
     [JsonPropertyName("consoJourTotal")]
-    public int? ConsoJourTotal { get; set; }
+    public decimal? ConsoJourTotal { get; set; }
 
     [JsonPropertyName("powerMax")]
     public int? PowerMax { get; set; }
@@ -72,4 +72,15 @@ public class ConsoDay
 
     [JsonPropertyName("indexTotalVeille")]
     public long? IndexTotalVeille { get; set; }
+
+    // ---------- Propriétés converties en kWh ----------
+    [JsonIgnore]
+    public decimal? ConsoJourHPkWh => ConsoJourHP.HasValue ? ConsoJourHP.Value / 1000 : null;
+
+    [JsonIgnore]
+    public decimal? ConsoJourHCkWh => ConsoJourHC.HasValue ? ConsoJourHC.Value / 1000 : null;
+
+    [JsonIgnore]
+    public decimal? ConsoJourTotalkWh => ConsoJourTotal.HasValue ? ConsoJourTotal.Value / 1000 : null;
+
 }

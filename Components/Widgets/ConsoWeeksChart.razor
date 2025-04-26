@@ -11,49 +11,46 @@
         </CardHeaderContent>
     </MudCardHeader>
 
-    <MudCardContent>
+    <MudCardContent Class="pt-1">
         <SfChart Palettes="@ChartPalette" Width="100%" Height="@ChartHeight">
 
-            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"
-                               LabelRotation="45"
-                               Interval="1">
+            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1">
                 <ChartAxisMajorGridLines Width="1"></ChartAxisMajorGridLines>
             </ChartPrimaryXAxis>
 
             <ChartPrimaryYAxis Title="@TitleY"
-                               LabelFormat="@LabelFormat" />
+            LabelFormat="@LabelFormat" />
 
             @if (ModeAffichage == ModeAffichage.kWh)
             {
                 @* ----------------------- Graphe kWH ----------------------- *@
-                <ChartSeries DataSource="@consoChartData" XName="Periode" YName="ConsoHP"
-                             Type="ChartSeriesType.StackingColumn" Name="Consommation Heures Pleines"
-                             ColumnWidth="0.9" ColumnSpacing="0.1"
-                             Fill="#4a86ff">
+                <ChartSeries DataSource="@consoChartData" XName="Week" YName="ConsoHPkWh"
+                Type="ChartSeriesType.StackingColumn" Name="Consommation Heures Pleines"
+                ColumnWidth="0.9" ColumnSpacing="0.1"
+                Fill="#4a86ff">
                 </ChartSeries>
 
-                <ChartSeries DataSource="@consoChartData" XName="Periode" YName="ConsoHC"
-                             Type="ChartSeriesType.StackingColumn" Name="Consommation Heures Creuses"
-                             CornerRadius="@(new ChartCornerRadius { TopLeft = 6, TopRight = 6 })"
-                             ColumnWidth="0.9" ColumnSpacing="0.1"
-                             Fill="#ffb545">
+                <ChartSeries DataSource="@consoChartData" XName="Week" YName="ConsoHCkWh"
+                Type="ChartSeriesType.StackingColumn" Name="Consommation Heures Creuses"
+                CornerRadius="@(new ChartCornerRadius { TopLeft = 6, TopRight = 6 })"
+                ColumnWidth="0.9" ColumnSpacing="0.1"
+                Fill="#ffb545">
                 </ChartSeries>
             }
             else
             {
                 @* ----------------------- Graphe Euros ----------------------- *@
                 <ChartSeries DataSource="@coutChartData" XName="Periode" YName="CoutConsommationHP"
-                             Type="ChartSeriesType.StackingColumn" Name="Coût Heures Pleines"
-                             CornerRadius="@(new ChartCornerRadius { TopLeft = 6, TopRight = 6 })"
-                             ColumnWidth="0.9" ColumnSpacing="0.1"
-                             Fill="#4a86ff">
+                Type="ChartSeriesType.StackingColumn" Name="Coût Heures Pleines"
+                ColumnWidth="0.9" ColumnSpacing="0.1"
+                Fill="#4a86ff">
                 </ChartSeries>
 
                 <ChartSeries DataSource="@coutChartData" XName="Periode" YName="CoutConsommationHC"
-                             Type="ChartSeriesType.StackingColumn" Name="Coût Heures Creuses"
-                             CornerRadius="@(new ChartCornerRadius { TopLeft = 6, TopRight = 6 })"
-                             ColumnWidth="0.9" ColumnSpacing="0.1"
-                             Fill="#ffb545">
+                Type="ChartSeriesType.StackingColumn" Name="Coût Heures Creuses"
+                CornerRadius="@(new ChartCornerRadius { TopLeft = 6, TopRight = 6 })"
+                ColumnWidth="0.9" ColumnSpacing="0.1"
+                Fill="#ffb545">
                     <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
                 </ChartSeries>
             }
@@ -62,24 +59,25 @@
 
             @if (ModeAffichage == ModeAffichage.kWh)
             {
-            <ChartTooltipSettings Enable="true" EnableHighlight="true">
-                <Template>
-                    @{
-                        var data = context as ChartTooltipInfo;
-                        var total = data.StackedTotalValue.ToString("F2");
-                        var backgroundColor = data.SeriesName == "Consommation Heures Pleines" ? "#d0f0fd" : "#fdebd0"; // Couleur de fond selon la série
-                        <div class="container" style="background-color:@backgroundColor;">
-                            <div class="box">
-                                <p><strong>Consommation totale :</strong></p>
-                                <p><strong>@total kWh</strong></p>
-                                <hr>
-                                <p><strong>@data.SeriesName</strong></p>
-                                <p><strong>@data.X : @data.Y</strong></p>
+                <ChartTooltipSettings Enable="true" EnableHighlight="true">
+                    <Template>
+                        @{
+                            var data = context as ChartTooltipInfo;
+                            var total = data.StackedTotalValue.ToString("F2");
+                            data.Text = data.X.ToString() + " - " + Year.ToString();
+                            var backgroundColor = data.SeriesName == "Consommation Heures Pleines" ? "#d0f0fd" : "#fdebd0"; // Couleur de fond selon la série
+                            <div class="container" style="background-color:@backgroundColor;">
+                                <div class="box">
+                                    <p><strong>Consommation totale :</strong></p>
+                                    <p><strong>@total kWh</strong></p>
+                                    <hr>
+                                    <p><strong>@data.SeriesName</strong></p>
+                                    <p><strong>@data.Text : @data.Y</strong></p>
+                                </div>
                             </div>
-                        </div>
-                    }
-                </Template>
-            </ChartTooltipSettings>
+                        }
+                    </Template>
+                </ChartTooltipSettings>
             }
             else if (ModeAffichage == ModeAffichage.Euros)
             {
@@ -88,6 +86,7 @@
                         @{
                             var data = context as ChartTooltipInfo;
                             var total = data.StackedTotalValue.ToString("F2");
+                            data.Text = data.X.ToString() + " - " + "2025";
                             var backgroundColor = data.SeriesName == "Coût Heures Pleines" ? "#d0f0fd" : "#fdebd0"; // Couleur de fond selon la série
                             <div class="container" style="background-color:@backgroundColor;">
                                 <div class="box">
@@ -95,12 +94,12 @@
                                     <p><strong>@total €</strong></p>
                                     <hr>
                                     <p><strong>@data.SeriesName</strong></p>
-                                    <p><strong>@data.X : @data.Y</strong></p>
+                                    <p><strong>@data.Text : @data.Y</strong></p>
                                 </div>
                             </div>
                         }
                     </Template>
-                </ChartTooltipSettings> 
+                </ChartTooltipSettings>
             }
 
         </SfChart>
@@ -111,17 +110,17 @@
 
 
 @code {
-    [Parameter] public IEnumerable<MonthlyChartConsoDto> consoChartData { get; set; }
-    [Parameter] public IEnumerable<MonthlyChartCoutDto> coutChartData { get; set; }
+    [Parameter] public IEnumerable<WeeklyChartConsoDto> consoChartData { get; set; }
+    [Parameter] public IEnumerable<WeeklyChartCoutDto> coutChartData { get; set; }
     [Parameter] public ModeAffichage ModeAffichage { get; set; }
     [Parameter] public string ChartHeight { get; set; }
-
-    private string ChartTitle => ModeAffichage == ModeAffichage.kWh ? "Consommation en kWh" : "Coûts Consommation sans abonnement (€)";
-    private string TitleY => ModeAffichage == ModeAffichage.kWh ? "Consommation (kWh)" : "Coût (Euros)";
-    private string LabelFormat => ModeAffichage == ModeAffichage.kWh ? "{value} kWh" : "{value} €";
+    [Parameter] public string ChartTitle { get; set; }
+    [Parameter] public int Year { get; set; }
 
     private static String[] ChartPalette = new String[] { "#4a86ff", "#ffb545", "#E94649", "#6FAAB0" };
 
+    private string TitleY => ModeAffichage == ModeAffichage.kWh ? "Consommation (kWh)" : "Coût (Euros)";
+    private string LabelFormat => ModeAffichage == ModeAffichage.kWh ? "{value} kWh" : "{value} €";
 }
 
 <style>

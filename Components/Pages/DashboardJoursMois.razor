@@ -1,279 +1,115 @@
 ﻿@page "/dashboard-jours-mois"
 
-@using BlazingConso.Entities
-@using Syncfusion.Blazor.Grids
-@using Syncfusion.Blazor
-@using System.Globalization
-
 @inject IConsoDayService ConsodayService
 
-<ResizeHandler OnHeightChanged="@HandleResize" />
+<MudText Class="d-flex align-left justify-left" Typo="Typo.h6">
+    @TitrePeriode
+</MudText>
 
-<MudText Class="d-flex align-left justify-left " Typo="Typo.h6">Plusieurs Jours</MudText>
+<MudPaper Elevation="0" Class="d-flex flex-column mt-4"
+          Style="overflow: hidden; min-height: calc(100vh - 110px); width: calc(100vw - 500px); background-color: #edf4f7;">
 
-<MudContainer Class="mt-6 px-0" MaxWidth="MaxWidth.ExtraLarge">
-    <MudGrid>
-        <MudItem xs="12">
-            <MudCard Class="card-custom-style" style="height:100%">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">
-                            Détail journalier de la consommation sur une période
-                        </MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudGrid Class="pt-0">
-                        <!-- Option 1 : Choix de la durée -->
-                        <MudItem xs="2">
-                            <MudSelect T="int" Label="Durée (jours)" @bind-Value="selectedDuration">
-                                <MudSelectItem Value="15">15 jours</MudSelectItem>
-                                <MudSelectItem Value="30">30 jours</MudSelectItem>
-                                <MudSelectItem Value="60">60 jours</MudSelectItem>
-                                <MudSelectItem Value="90">90 jours</MudSelectItem>
-                            </MudSelect>
-                        </MudItem>
+    <!-- Contenu scrollable -->
+    <MudGrid Spacing="4" Class="overflow-auto">
 
-                        <!-- Option 2 : Mode de sélection -->
-                        <MudItem xs="3">
-                            <MudSelect T="string" Label="Mode de sélection" @bind-Value="selectedMode">
-                                <MudSelectItem Value="@("debut")">À partir d’une date de début</MudSelectItem>
-                                <MudSelectItem Value="@("fin")">À partir d’une date de fin</MudSelectItem>
-                            </MudSelect>
-                        </MudItem>
-
-                        <!-- DatePicker selon le mode -->
-                        <MudItem xs="2">
-                            @if (selectedMode == "debut")
-                            {
-                                <MudDatePicker Label="Date de début" @bind-Date="startDate" />
-                            }
-                            else if (selectedMode == "fin")
-                            {
-                                <MudDatePicker Label="Date de fin" @bind-Date="endDate" />
-                            }
-                        </MudItem>
-
-                        <!-- Date calculée -->
-                        <MudItem xs="2">
-                            @if (selectedMode == "debut")
-                            {
-                                <MudDatePicker Label="Date de fin" @bind-Date="endDate" Disabled="true" Color="Color.Error" />
-                            }
-                            else if (selectedMode == "fin")
-                            {
-                                <MudDatePicker Label="Date de début" @bind-Date="startDate" Disabled="true" />
-                            }
-                        </MudItem>
-
-                        <MudItem xs="3" Class="d-flex justify-center align-center">
-                            <MudButton OnClick="@LoadData" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Upload" Color="Color.Success">Charger</MudButton>
-                        </MudItem>
-
-                    </MudGrid>
-                </MudCardContent>
-            </MudCard>
+        @*-------------------------------------------------- ConsoChart ------------------------------------------------------*@  
+        <MudItem xs="12" md="12">
+            <ConsoJoursDuMoisChart ConsoChartData="@ConsoChartData" CoutChartData="@CoutChartData" ModeAffichage="@Mode" />
         </MudItem>
 
-        <MudItem xs="6" sm="6">
-            @if (consoDays == null)
-            {
-                <p>Chargement des données...</p>
-            }
-            else if (consoDays.Count() == 0)
-            {
-                <p>Aucune donnée trouvée pour ce mois.</p>
-            }
-            else
-            {
-                <ConsoJoursDuMoisGrid ConsoDays="@consoDays" GridHeight="@GridHeight" ToolbarItems="@ToolbarItems" />
-            }
+        @*------------------------------------- Toutes les journées du mois en cours -----------------------------------------*@  
+        <MudItem xs="12" md="12">
+            <ConsoJoursDuMoisGrid ConsoDays="@consoDays" GridHeight="@GridHeight" allowPaging="@allowPaging" />
         </MudItem>
-        <MudItem xs="6" sm="6">
-            <ConsoJoursDuMoisChart ConsoChartData="@ConsoChartData" ChartHeight="@ChartHeight" />
-        </MudItem>
+
     </MudGrid>
-</MudContainer>
 
+    <!-- Contenu fixe à droite -->
+    <MudPaper Elevation="4" Class="d-flex flex-column" Style="width: 300px; position: fixed; top: 0; right: 0; height: 100vh; background-color:white;">
+        <MudPaper Class="pa-0" Style="background-color: #f5f5f5; height: 100%;">
 
-@code {
-    [Parameter] public EventCallback OnReady { get; set; }
+            <!-- 1. En-tête grise foncée avec icône et texte alignés à gauche, angles droits -->
+            <MudPaper Class="d-flex align-items-center px-3"
+            Style="background-color: #e0e0e0; padding-top: 12px; padding-bottom: 12px; border-radius: 0;">
+                <MudIcon Icon="@Icons.Material.Filled.Tune" Style="font-size: 2rem;" />
+                <MudSpacer />
+                <MudText Class="pr-4" Typo="Typo.h6">Sélection</MudText>
+            </MudPaper>
 
-    private SfGrid<ConsoDay> ConsoGrid;
-    private string GridHeight = "400px";
-    private string ChartHeight = "620px";
-    public string[] ToolbarItems = new string[] { "ColumnChooser" };
+            <!-- ESPACE -->
+            <div style="height: 48px;"></div>
 
-    IEnumerable<ConsoDay> consoDays = new List<ConsoDay>();
+            <!-- 2. DateRangePicker -->
 
-    private bool isLoading = false;
+            <MudText Class="pl-5 mb-1" Typo="Typo.body2">Choisir une période</MudText>
+            <div class="px-4">
+                <SfDateRangePicker TValue="DateTime"
+                @bind-StartDate="@startDate" @bind-EndDate="@endDate"
+                Placeholder="Sélectionnez une période"
+                Style="width: 100%;"
+                FullScreen="true" ShowClearButton="true">
 
-    // ----- Liste des données de consommation pour le graphique
-    private List<HistoDayData> ConsoChartData { get; set; } = new();
+                    @*<DateRangePickerEvents TValue="DateTime" ValueChange="ValueChangeHandler"></DateRangePickerEvents>*@
 
+                    <DateRangePickerPresets>
+                        <DateRangePickerPreset Label="Cette semaine" Start="@WeekStart" End="@WeekEnd"></DateRangePickerPreset>
+                        <DateRangePickerPreset Label="Semaine dernière" Start="@LastWeekStart" End="@LastWeekEnd"></DateRangePickerPreset>
+                        <DateRangePickerPreset Label="Ce mois-ci" Start="@MonthStart" End="@MonthEnd"></DateRangePickerPreset>
+                        <DateRangePickerPreset Label="Mois dernier" Start="@LastMonthStart" End="@LastMonthEnd"></DateRangePickerPreset>
+                        <DateRangePickerPreset Label="Trimestre dernier" Start="@LastQuarterStart" End="@LastQuarterEnd"></DateRangePickerPreset>
+                        <DateRangePickerPreset Label="Année dernière" Start="@LastYearStart" End="@LastYearEnd"></DateRangePickerPreset>
+                    </DateRangePickerPresets>
 
-    // ---------------------------------------------------------------------------------------------------
-    private int _selectedDuration = 30;
-    private int selectedDuration
-    {
-        get => _selectedDuration;
-        set
-        {
-            if (_selectedDuration != value)
-            {
-                _selectedDuration = value;
-                RecalculateDates();
-                StateHasChanged();
-            }
-        }
-    }
+                </SfDateRangePicker>
+            </div>
 
+            <!-- ESPACE -->
+            <div style="height: 48px;"></div>
 
-    // ---------------------------------------------------------------------------------------------------
-    private string _selectedMode = "fin";
-    private string selectedMode
-    {
-        get => _selectedMode;
-        set
-        {
-            if (_selectedMode != value)
-            {
-                _selectedMode = value;
-                RecalculateDates();
-                StateHasChanged();
-            }
-        }
-    }
+            <div class="px-4">
+                <MudText Class="pl-1 mb-0" Typo="Typo.body2">Tableau avec pagination ?</MudText>
+                <div class="d-flex align-items-center">
+                    <MudSwitch @bind-Value="allowPaging"
+                    ThumbIcon="@(allowPaging == true ? Icons.Material.Filled.LastPage : Icons.Material.Filled.Elevator)"
+                    ThumbIconColor="@(allowPaging == true ? Color.Success : Color.Error)">
+                    </MudSwitch>
+                    <MudText Class="mt-1 ml-3 pt-1">@((allowPaging ? "Tableau avec Pagination" : "Tableau avec scroll"))</MudText>
+                </div>
+            </div>
 
+            <!-- ESPACE -->
+            <div style="height: 48px;"></div>
 
-    // ---------------------------------------------------------------------------------------------------
-    private DateTime? _startDate = DateTime.Today.AddDays(-30);
-    private DateTime? startDate
-    {
-        get => _startDate;
-        set
-        {
-            if (_startDate != value)
-            {
-                _startDate = value;
-                RecalculateDates();
-                StateHasChanged();
-            }
-        }
-    }
+            <div class="px-4">
+                <MudText Class="pl-1 mb-0" Typo="Typo.body2">Unité d'affichage du graphique</MudText>
+                <div class="d-flex align-items-center">
+                    <MudSwitch @bind-Value="isAffichagekWh"
+                    ThumbIcon="@(isAffichagekWh == true ? Icons.Material.Filled.ElectricBolt : Icons.Material.Filled.Euro)"
+                    ThumbIconColor="@(isAffichagekWh == true ? Color.Success : Color.Error)">
+                    </MudSwitch>
+                    <MudText Class="mt-1 ml-3 pt-1">@((isAffichagekWh ? "Unité : kWh" : "Unité : €"))</MudText>
+                </div>
+            </div>
 
+            <!-- ESPACE -->
+            <div style="height: 48px;"></div>
 
-    // ---------------------------------------------------------------------------------------------------
-    private DateTime? _endDate = DateTime.Today;
-    private DateTime? endDate
-    {
-        get => _endDate;
-        set
-        {
-            if (_endDate != value)
-            {
-                _endDate = value;
-                RecalculateDates();
-                StateHasChanged();
-            }
-        }
-    }
+            <!-- 4. Bouton centré -->
+            <div class="d-flex justify-center">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AfficherDonnees">
+                    Appliquer
+                </MudButton>
+            </div>
 
-
-    // ---------------------------------------------------------------------------------------------------
-    // Méthode pour recalculer les dates en fonction de la durée et du mode
-    private void RecalculateDates()
-    {
-        if (selectedMode == "debut" && startDate.HasValue)
-        {
-            // ----- Calculer la date de fin en fonction de la durée et de la date de début
-            endDate = startDate.Value.AddDays(selectedDuration);
-        }
-        else if (selectedMode == "fin" && endDate.HasValue)
-        {
-            // ----- Calculer la date de début en fonction de la durée et de la date de fin
-            startDate = endDate.Value.AddDays(-selectedDuration);
-        }
-    }
-
-
-    // ---------------------------------------------------------------------------------------------------
-    protected override async Task OnInitializedAsync()
-    {
-        RecalculateDates();
-        await LoadData();
-    }
-
-
-    // ---------------------------------------------------------------------------------------------------
-    private async Task LoadData()
-    {
-        isLoading = true;
-        RecalculateDates();
-        StateHasChanged();
-
-        if (startDate == null || endDate == null)
-            return;
-
-        try
-        {
-            consoDays = await ConsodayService.GetConsoDaysPeriod(startDate, endDate);
-
-            if (consoDays.Any())
-            {
-                ConsoChartData = consoDays.Select(cd => new HistoDayData
-                    {
-                        DateJour = DateTime.Parse(cd.DateJour),
-                        Consommation = cd.ConsoJourTotal.HasValue ? (decimal?)cd.ConsoJourTotal.Value / 1000m : null
-                    }).ToList();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Erreur de chargement : {ex.Message}");
-        }
-
-        isLoading = false;
-        StateHasChanged();
-    }
-
-
-    // ---------------------------------------------------------------------------------------------------
-    private async Task RefreshData()
-    {
-        await LoadData();
-    }
-
-
-    // ---------------------------------------------------------------------------------------------------
-    private void HandleResize(int availableHeight)
-    {
-        var gridUsableHeight = availableHeight - 400;
-        var chartUsableHeight = availableHeight - 250;
-
-        GridHeight = $"{gridUsableHeight}px";
-        ChartHeight = $"{chartUsableHeight}px";
-        StateHasChanged();
-    }
-
-
-    // ---------------------------------------------------------------------------------------------------
-    public void TooltipRender(TooltipRenderEventArgs args)
-    {
-        double pointYValue = Convert.ToDouble(args.Data.PointY);
-        string value = pointYValue.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
-        args.Text = $"<b>{value}</b>";
-    }
-
-
-    // ---------------------------------------------------------------------------------------------------
-    private static String[] ChartPalette = new String[] { "#4a86ff", "#ffb545", "#E94649", "#6FAAB0" };
-    private static String[] ColorPalette = new string[] { "rgb(43, 112, 184)", "rgb(128, 188, 0)", "rgb(70, 194, 203)", "#C12138", "#EB7726", "#E8C41E" };
-}
+        </MudPaper>
+    </MudPaper>
+</MudPaper>
 
 <style>
-    .mud-grid-spacing-xs-6 > .mud-grid-item {
-        padding-left: 24px;
-        padding-top: 16px;
+    /* To specify height and font size */
+    .e-input-group input.e-input, .e-input-group.e-control-wrapper input.e-input {
+        font-size: 14px;
+        height: 40px;
     }
+
 </style>

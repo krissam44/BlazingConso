@@ -1,0 +1,77 @@
+﻿@using BlazingConso.Entities
+@using BlazingConso.Dtos
+@using BlazingConso.Enums
+@using Syncfusion.Blazor.Charts
+@using System.Globalization
+
+<MudCard Class="card-custom-style" Style="height:100%">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">Comparaison sur 3 années</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+
+        <SfChart Palettes="@ChartPalette" Width="100%" Height="450px">
+
+            <ChartMargin Top="20" Bottom="0" Left="10" Right="10"></ChartMargin>
+
+            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+            </ChartPrimaryXAxis>
+
+            <ChartPrimaryYAxis Minimum="0" Maximum="3000" Title="Consommation (kWh)">
+            </ChartPrimaryYAxis>
+
+            <ChartSeriesCollection>
+
+                <ChartSeries DataSource="@monthlyConsoChartData"
+                             XName="NomMois" YName="AnneeNmoins2.ConsoTotalekWh"
+                             Type="ChartSeriesType.Column"
+                             Name="Année N-2"
+                             CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                             ColumnWidth="0.9"
+                             Fill="#1E88E5">
+                </ChartSeries>
+
+                <ChartSeries DataSource="@monthlyConsoChartData"
+                             XName="NomMois" YName="AnneeNmoins1.ConsoTotalekWh"
+                             Type="ChartSeriesType.Column"
+                             Name="Année N-1"
+                             CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                             ColumnWidth="0.9"
+                             Fill="#43A047">
+                </ChartSeries>
+
+                <ChartSeries DataSource="@monthlyConsoChartData"
+                             XName="NomMois" YName="AnneeN.ConsoTotalekWh"
+                             Type="ChartSeriesType.Column"
+                             Name="Année N"
+                             CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })"
+                             ColumnWidth="0.9"
+                             Fill="#FB8C00">
+                </ChartSeries>
+
+            </ChartSeriesCollection>
+
+            <ChartCrosshairSettings Enable="true" DashArray="2,3" LineType="LineType.Vertical"></ChartCrosshairSettings>
+
+            <ChartTooltipSettings Enable="true" Header="<b>${point.x}</b>" Format="<b>Consommation : ${point.y} kWh</b>" EnableHighlight="true"></ChartTooltipSettings>
+            
+        </SfChart>
+
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+    [Parameter] public List<MonthlyComparaisonConsoDto> monthlyConsoChartData { get; set; }
+
+    [Parameter] public ModeAffichage ModeAffichage { get; set; }
+    [Parameter] public string ChartHeight { get; set; }
+
+    private string ChartTitle => ModeAffichage == ModeAffichage.kWh ? "Consommation en kWh" : "Coûts Consommation sans abonnement (€)";
+    private string TitleY => ModeAffichage == ModeAffichage.kWh ? "Consommation (kWh)" : "Coût (Euros)";
+    private string LabelFormat => ModeAffichage == ModeAffichage.kWh ? "{value} kWh" : "{value} €";
+
+    private static String[] ChartPalette = new String[] { "#4a86ff", "#ffb545", "#E94649", "#6FAAB0" };
+}

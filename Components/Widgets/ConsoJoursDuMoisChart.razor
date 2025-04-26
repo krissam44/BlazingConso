@@ -1,34 +1,81 @@
-﻿@using BlazingConso.Entities
+﻿@using System.Globalization
+@using BlazingConso.Dtos
+@using BlazingConso.Entities
+@using BlazingConso.Enums
 @using Syncfusion.Blazor.Charts
-@using System.Globalization
+
 
 @if (ConsoChartData?.Any() == true)
 {
-    <SfChart Palettes="@ChartPalette" Width="100%" Height="@ChartHeight">
-        <ChartPrimaryXAxis Title="Jours"
-                           ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime"
-                           Format="dd/MM/yyyy"
-                           LabelFormat="dd/MM"
-                           IntervalType="IntervalType.Days"
-                           LabelRotation="45">
-        </ChartPrimaryXAxis>
-        <ChartPrimaryYAxis Title="Consommation (kWh)"
-                           LabelFormat="{value} kWh">
-        </ChartPrimaryYAxis>
+    <MudCard Class="card-custom-style" Style="height:100%">
+        <MudCardHeader Class="mud-card-header">
+            <CardHeaderContent>
+                <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">@TitleChart</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
 
-        <ChartSeriesCollection>
-            <ChartSeries DataSource="@ConsoChartData"
-                         XName="DateJour" YName="Consommation"
-                         Type="ChartSeriesType.Column"
-                         ColumnWidth="0.9" ColumnSpacing="0.1"
-                         CornerRadius="@(new ChartCornerRadius { TopLeft = 4, TopRight = 4 })" 
-                         LegendShape="LegendShape.Rectangle">
-                <ChartEmptyPointSettings Mode="EmptyPointMode.Gap" />
-            </ChartSeries>
-        </ChartSeriesCollection>
-        <ChartTooltipSettings Enable="true" Header="<b>${point.x}</b>" Format="<b>Consommation : ${point.y}</b>" EnableHighlight="true" />
-        <ChartZoomSettings EnableSelectionZooming="true" />
-    </SfChart>
+        <MudCardContent Class="pt-1">
+
+            <SfChart Palettes="@ChartPalette" Width="100%" Height="@ChartHeight">
+
+                <ChartPrimaryXAxis Title="Jours"
+                ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime"
+                Format="dd/MM/yyyy"
+                LabelFormat="dd/MM"
+                IntervalType="IntervalType.Days"
+                LabelRotation="45">
+                </ChartPrimaryXAxis>
+
+                <ChartPrimaryYAxis Title="@TitleY"
+                LabelFormat="@LabelFormat">
+                </ChartPrimaryYAxis>
+
+                @if (ModeAffichage == ModeAffichage.kWh)
+                {
+                    @* ------------------------------------ Graphe kWH ------------------------------------ *@
+                    <ChartSeriesCollection>
+                        <ChartSeries DataSource="@ConsoChartData"
+                        XName="DateJour" YName="Consommation"
+                        Type="ChartSeriesType.Column"
+                        ColumnWidth="0.9" ColumnSpacing="0.1"
+                        CornerRadius="@(new ChartCornerRadius { TopLeft = 6, TopRight = 6 })"
+                        LegendShape="LegendShape.Rectangle">
+                            <ChartEmptyPointSettings Mode="EmptyPointMode.Gap" />
+                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                        </ChartSeries>
+                    </ChartSeriesCollection>
+                }
+                else
+                {
+                    @* ---------------------------------- Graphe Euros ------------------------------------ *@
+                    <ChartSeriesCollection>
+                        <ChartSeries DataSource="@CoutChartData"
+                        XName="DateJour" YName="CoutTotal"
+                        Type="ChartSeriesType.Column"
+                        ColumnWidth="0.9" ColumnSpacing="0.1"
+                        CornerRadius="@(new ChartCornerRadius { TopLeft = 6, TopRight = 6 })"
+                        LegendShape="LegendShape.Rectangle"
+                        Fill="#ffb545">
+                            <ChartEmptyPointSettings Mode="EmptyPointMode.Gap" />
+                            <ChartSeriesAnimation Enable="false"></ChartSeriesAnimation>
+                        </ChartSeries>
+                    </ChartSeriesCollection>
+                }
+
+                <ChartCrosshairSettings Enable="true" DashArray="2,3" LineType="LineType.Vertical"></ChartCrosshairSettings>
+
+                @if (ModeAffichage == ModeAffichage.kWh)
+                {
+                    <ChartTooltipSettings Enable="true" Header="<b>${point.x}</b>" Format="<b>Consommation : ${point.y}</b>" EnableHighlight="true" />
+                }
+                else
+                {
+                    <ChartTooltipSettings Enable="true" Header="<b>${point.x}</b>" Format="<b>Coût : ${point.y}</b>" EnableHighlight="true" />
+                }
+
+            </SfChart>
+        </MudCardContent>
+    </MudCard>
 }
 else
 {
@@ -37,8 +84,15 @@ else
 
 
 @code {
-    [Parameter] public List<HistoDayData> ConsoChartData { get; set; } = new();
+    [Parameter] public List<HistoDayConsoDto> ConsoChartData { get; set; } = new();
+    [Parameter] public List<HistoDayCoutDto> CoutChartData { get; set; } = new();
     [Parameter] public string ChartHeight { get; set; } = "620px";
+    [Parameter] public ModeAffichage ModeAffichage { get; set; }
+
+    private string TitleChart => ModeAffichage == ModeAffichage.kWh ? "Graphique de la consommation journalière en kWh" :
+                "Graphique de la consommation journalière en €";
+    private string TitleY => ModeAffichage == ModeAffichage.kWh ? "Consommation (kWh)" : "Coût (Euros)";
+    private string LabelFormat => ModeAffichage == ModeAffichage.kWh ? "{value} kWh" : "{value} €";
 
     private static string[] ChartPalette = new string[] { "#4a86ff", "#ffb545", "#E94649", "#6FAAB0" };
 }

@@ -23,7 +23,7 @@ public class ConsoMonthService : IConsoMonthService
     // -----------------------------------------------------------------------------------------------------------------
     public async Task<List<ConsoMonth>> GetConsoMonthsOfYearAsync(int startMonth, int startYear, int endMonth, int endYear)
     {
-        string query = $"consoMonthPeriod?startMonth={startMonth}&startYear={startYear}&endMonth={endMonth}&endYear={endYear}";
+        string query = $"consoMonthsPeriod?startMonth={startMonth}&startYear={startYear}&endMonth={endMonth}&endYear={endYear}";
         
         var response = await client.GetAsync(query);
         if (response.IsSuccessStatusCode)

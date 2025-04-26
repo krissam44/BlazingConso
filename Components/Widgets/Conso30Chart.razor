@@ -6,14 +6,15 @@
 
 <PageTitle>Consommation Électrique</PageTitle>
 
-<MudCard>
+
+<MudCard Class="card-custom-style" Style="height:100%">
     <MudCardHeader>
         <CardHeaderContent>
             <MudText Class="d-flex align-center justify-center mud-width-full" Typo="Typo.h6">Consommation de la journée (par tranche de 30 minutes)</MudText>
         </CardHeaderContent>
     </MudCardHeader>
 
-    <MudCardContent Class="doc-section-component-container">
+    <MudCardContent>
         <SfChart Palettes="@ChartPalette" Height="@GridHeight">
             <ChartEvents TooltipRender="TooltipEvent"></ChartEvents>
 
@@ -41,12 +42,14 @@
                 </ChartSeries>
             </ChartSeriesCollection>
 
+            <ChartCrosshairSettings Enable="true" DashArray="2,3" LineType="LineType.Vertical"></ChartCrosshairSettings>
             <ChartLegendSettings Visible="true" EnableHighlight="true" ShapeWidth="9" ShapeHeight="9"></ChartLegendSettings>
             <ChartTooltipSettings Enable="true" Header="<b>${point.x}</b>" Format="<b>Consommation : ${point.y}</b>" EnableHighlight="true"></ChartTooltipSettings>
             <ChartZoomSettings EnableSelectionZooming="true"></ChartZoomSettings>
         </SfChart>
     </MudCardContent>
 </MudCard>
+
 
 @code {
     [Parameter] public string GridHeight { get; set; } = "400px";

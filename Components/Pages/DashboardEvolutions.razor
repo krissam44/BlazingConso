@@ -1,0 +1,62 @@
+﻿@page "/dashboard-evolutions"
+
+@using System.Globalization
+@using BlazingConso.Dtos
+
+@inject IConsoDayService ConsodayService
+
+<MudText Class="d-flex align-left justify-left " Typo="Typo.h6">Evolution de la consommation</MudText>
+
+<MudContainer Class="mt-6 px-0" MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid Spacing="4">
+        <MudItem xs="12">
+            <MudCard Class="card-custom-style">
+                <MudCardHeader>
+                    <CardHeaderContent>
+
+                    </CardHeaderContent>
+                </MudCardHeader>
+
+                <MudCardContent>
+                    <MudGrid Class="pt-0" Style="height: 70px Width: 200px" Spacing="4">
+                        <div class="pl-6 pt-3">
+                            <MudText Class="pl-1 mb-0" Typo="Typo.body2">Unité d'affichage du graphique</MudText>
+                            <div class="d-flex align-items-center">
+                                <MudSwitch @bind-Value="isAffichagekWh"
+                                           ThumbIcon="@(isAffichagekWh == true ? Icons.Material.Filled.ElectricBolt : Icons.Material.Filled.Euro)"
+                                           ThumbIconColor="@(isAffichagekWh == true ? Color.Success : Color.Error)">
+                                </MudSwitch>
+                                <MudText Class="mt-1 ml-3 pt-1">@((isAffichagekWh ? "Unité : kWh" : "Unité : €"))</MudText>
+                            </div>
+                        </div>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="6" sm="6">
+            @* ---------------------------------- Graphique de comparaison des 3 dernières semaines ------------------------------- *@
+            <ConsoChart3Weeks WeeklyConsoChartData="@weeklyConsoChartData" WeeklyCoutChartData="@weeklyCoutChartData" ModeAffichage="@Mode"/>
+        </MudItem>
+
+        @* ----------------------------------- Graphique de comparaison des 3 dernières années -------------------------------- *@
+        <MudItem xs="6" sm="6">
+            <ConsoChart3Years MonthlyConsoChartData="@monthlyConsoChartData" ModeAffichage="@Mode" />
+        </MudItem>
+
+    </MudGrid>
+</MudContainer>
+
+
+
+<style>
+    .mud-card-header {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .mud-card-content {
+        padding-top: 0px;
+        padding-bottom: 8px;
+    }
+</style>

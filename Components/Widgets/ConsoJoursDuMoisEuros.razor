@@ -134,6 +134,7 @@
     </MudCardContent>
 </MudCard>
 
+
 @code {
     [Parameter] public EventCallback OnReady { get; set; }  // Ajout du callback
     IEnumerable<ConsoDay> consoDays = new List<ConsoDay>();
@@ -170,14 +171,3 @@
         }
     }
 }
-
-<style>
-
-    .e-pager.customCss .e-currentitem.e-numericitem.e-focused, .e-pager.customCss .e-currentitem {
-        background: #2bbbad;
-        color: #f6f3f1;
-        border-bottom: 0px;
-        border-radius: 0.125rem;
-        outline-style: auto;
-    }
-</style>

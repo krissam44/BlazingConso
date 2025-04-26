@@ -18,7 +18,7 @@ public class ConsoHoraire
 
     public decimal coutConsommation { get; set; }
 
-    // Ajout pour afficher le pourcentage
+    // ----- Ajout pour afficher le pourcentage
     public double? Pourcentage { get; set; }
 
     public string? LabelDisplay => Pourcentage.HasValue ? $"{Pourcentage:0.0} %" : TrancheHoraire;

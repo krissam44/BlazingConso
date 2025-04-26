@@ -27,14 +27,14 @@
         <NavMenu />
     </MudDrawer>
 
-    <MudMainContent Class="mt-0 mb-0 pt-4 pl-4 pr-4 pb-0" Style="background-color: #edf4f7; min-height: calc(100vh - 46px);">
+    <MudMainContent Class="mt-0 mb-0 pt-4 pl-4 pr-4 pb-0" Style="background-color: #edf4f7; min-height: calc(100vh - 28px);">
         @Body
     </MudMainContent>
 
 </MudLayout>
 
 <footer class="page-footer">
-    <MudText Typo="Typo.caption" Align="Align.Center">BlazingConso - Version @AppInfosOptions.Value.Version - ©Copyright @AppInfosOptions.Value.Copyright - Tous droits réservés</MudText>
+    <MudText Typo="Typo.caption" Align="Align.Center">BlazingConso - Version @AppInfosOptions.Value.Version - © Copyright @AppInfosOptions.Value.Copyright - Tous droits réservés</MudText>
 </footer>
 
 <div id="blazor-error-ui" data-nosnippet>
@@ -55,15 +55,6 @@
         min-height: 100vh; /* Pour forcer l'expansion du fond */
     }
 
-    .page-footer {
-        flex-shrink: 0;
-        padding: 12px;
-        background-color: #edf4f7;
-        color: #0f172a;
-        text-align: center;
-        font-size: 0.95rem;
-    }
-
     .logo-container {
         display: flex;
         justify-content: center;
@@ -71,5 +62,15 @@
         height: 70px; /* Ajustable à ton besoin */
         padding-top: -30px;
         margin-top: -30px;
+    }
+
+    .page-footer {
+        flex-shrink: 0;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        background-color: #edf4f7;
+        color: #0f172a;
+        text-align: center;
+        font-size: 0.95rem;
     }
 </style>
